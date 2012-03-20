@@ -5,8 +5,6 @@ import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Map;
-import java.util.List;
 import java.io.File;
 
 public class PostGameWindow extends JFrame

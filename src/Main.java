@@ -1,5 +1,4 @@
 import gameLogic.Session;
-import gameLogic.GameResult;
 import userInterface.SettingsWindow;
 import userInterface.MainWindow;
 import userInterface.PostGameWindow;

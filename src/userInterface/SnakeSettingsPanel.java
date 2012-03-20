@@ -1,15 +1,11 @@
 package userInterface;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import gameLogic.*;
-import javax.swing.filechooser.*;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.*;
 import static java.awt.GridBagConstraints.*;
 

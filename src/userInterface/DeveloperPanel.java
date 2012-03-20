@@ -1,9 +1,7 @@
 package userInterface;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
-import java.awt.Dimension;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;

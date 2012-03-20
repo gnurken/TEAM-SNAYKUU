@@ -2,7 +2,6 @@ package bot;
 
 import gameLogic.*;
 import java.util.List;
-import java.util.Random;
 
 public class Cancer implements Brain
 {
