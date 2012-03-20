@@ -16,7 +16,7 @@ public class Team {
 	
 	public Set<Snake> getSnakes()
 	{
-		return snakes;
+		return new TreeSet<Snake>(snakes);
 	}
 	
 	public int getSize()
