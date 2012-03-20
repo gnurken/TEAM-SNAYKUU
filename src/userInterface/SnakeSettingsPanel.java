@@ -11,7 +11,7 @@ import static java.awt.GridBagConstraints.*;
 
 class SnakeSettingsPanel extends JPanel
 {
-	private JList snakeJList;
+	private JList snakeJList1, snakeJList2;
 	private JList brainJList;
 	private JButton addSnakeButton;
 	private JButton removeSnakeButton;
@@ -49,7 +49,7 @@ class SnakeSettingsPanel extends JPanel
 			available.setHorizontalAlignment(JLabel.CENTER);
 			gridbag.setConstraints(available, constraint);
 			add(available);
-		
+			
 		constraint.fill = BOTH;
 		constraint.gridwidth = 1;
 		constraint.gridheight = 8;
@@ -61,26 +61,66 @@ class SnakeSettingsPanel extends JPanel
 			brainJList = new JList();
 			brainJList.addMouseListener(new BrainMouseListener());
 			
-			JScrollPane jsp2 = new JScrollPane(brainJList);
-			jsp2.setPreferredSize(jsp2.getPreferredSize());
-			gridbag.setConstraints(jsp2, constraint);
-			add(jsp2);
+			JScrollPane jspb = new JScrollPane(brainJList);
+			jspb.setPreferredSize(jspb.getPreferredSize());
+			gridbag.setConstraints(jspb, constraint);
+			add(jspb);
 		
+		constraint.fill = HORIZONTAL;
+		constraint.insets = new Insets(4, 4, 4, 4);
+		constraint.gridwidth = 1;
+		constraint.gridheight = 1;
+		constraint.gridx = 2;
+		constraint.gridy = 1;
+		
+			JLabel team1 = new JLabel("Team 1:");
+			team1.setHorizontalAlignment(JLabel.CENTER);
+			gridbag.setConstraints(team1, constraint);
+			add(team1);
+			
 		constraint.fill = BOTH;
 		constraint.gridwidth = 1;
-		constraint.gridheight = 8;
+		constraint.gridheight = 3;
 		constraint.weightx = 0.5;
 		constraint.weighty = 0.5;
 		constraint.gridx = 2;
 		constraint.gridy = 1;
 		
-			snakeJList = new JList();
-			snakeJList.addMouseListener(new SnakeMouseListener());
+			snakeJList1 = new JList();
+			snakeJList1.addMouseListener(new SnakeMouseListener());
 			
-			JScrollPane jsp1 = new JScrollPane(snakeJList);
+			JScrollPane jsp1 = new JScrollPane(snakeJList1);
 			jsp1.setPreferredSize(jsp1.getPreferredSize());
 			gridbag.setConstraints(jsp1, constraint);
 			add(jsp1);
+		
+		constraint.fill = HORIZONTAL;
+		constraint.insets = new Insets(4, 4, 4, 4);
+		constraint.gridwidth = 1;
+		constraint.gridheight = 1;
+		constraint.gridx = 2;
+		constraint.gridy = 4;
+		
+			JLabel team2 = new JLabel("Team 2:");
+			team2.setHorizontalAlignment(JLabel.CENTER);
+			gridbag.setConstraints(team2, constraint);
+			add(team2);
+			
+		constraint.fill = BOTH;
+		constraint.gridwidth = 1;
+		constraint.gridheight = 3;
+		constraint.weightx = 0.5;
+		constraint.weighty = 0.5;
+		constraint.gridx = 2;
+		constraint.gridy = 4;
+		
+			snakeJList2 = new JList();
+			snakeJList2.addMouseListener(new SnakeMouseListener());
+			
+			JScrollPane jsp2 = new JScrollPane(snakeJList2);
+			jsp1.setPreferredSize(jsp2.getPreferredSize());
+			gridbag.setConstraints(jsp2, constraint);
+			add(jsp2);
 		
 		constraint.fill = NONE;
 		constraint.weightx = 0.1;
@@ -215,7 +255,7 @@ class SnakeSettingsPanel extends JPanel
 			
 			snakes.put(generateSnakeName(name), name);
 				
-			snakeJList.setListData(snakes.keySet().toArray());
+			snakeJList1.setListData(snakes.keySet().toArray());
 		}
 	}
 	
@@ -223,13 +263,13 @@ class SnakeSettingsPanel extends JPanel
 	{
 		public void actionPerformed(ActionEvent event)
 		{
-			Object selectedObject = snakeJList.getSelectedValue();
+			Object selectedObject = snakeJList1.getSelectedValue();
 			if (selectedObject == null)
 				return;
 			
 			snakes.remove(selectedObject.toString());
 			
-			snakeJList.setListData(snakes.keySet().toArray());
+			snakeJList1.setListData(snakes.keySet().toArray());
 		}
 	}
 	
