@@ -1,12 +1,12 @@
 package gameLogic;
 
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 
 public class Team {
 
-	private Set<Snake> snakes = new TreeSet<Snake>();
+	private Set<Snake> snakes = new HashSet<Snake>();
 	private String name;
 	
 	public Team(String n)
@@ -16,7 +16,7 @@ public class Team {
 	
 	public Set<Snake> getSnakes()
 	{
-		return new TreeSet<Snake>(snakes);
+		return new HashSet<Snake>(snakes);
 	}
 	
 	public int getSize()

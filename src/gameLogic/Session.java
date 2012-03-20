@@ -15,6 +15,7 @@ public class Session implements Game
 {
 	private Board board;
 	private Set<Snake> snakes = new HashSet<Snake>();
+	private Set<Team> teams = new HashSet<Team>();
 	private Map<Snake, ErrorState> snakeErrors = new HashMap<Snake, ErrorState>();
 	
 	private Random random = new Random();
@@ -36,7 +37,7 @@ public class Session implements Game
 	
 	public GameState getCurrentState()
 	{
-		return new GameState(board, snakes, metadata, ErrorState.NO_ERROR);
+		return new GameState(board, snakes, teams, metadata, ErrorState.NO_ERROR);
 	}
 	
 	public Metadata getMetadata()
@@ -44,17 +45,35 @@ public class Session implements Game
 		return metadata;
 	}
 	
-	public void addSnake(Snake newSnake)
+	public void addTeam(Team newTeam)
+	{
+		if (newTeam == null)
+			throw new IllegalArgumentException("Trying to add a null team.");
+		
+		teams.add(newTeam);
+	}
+	
+	public void addSnake(Snake newSnake, Team team)
 	{
 		if (newSnake == null)
 			throw new IllegalArgumentException("Trying to add a null Snake.");
+		else if (team == null)
+			throw new IllegalArgumentException("Trying to add snake to a null team.");
+		else if (!teams.contains(team))
+			throw new IllegalArgumentException("Trying to add snake to a team that has not been added.");
 		
 		snakes.add(newSnake);
+		team.addSnake(newSnake);
 	}
 	
 	public Board getBoard()
 	{
 		return board;
+	}
+	
+	public Set<Team> getTeams()
+	{
+		return new TreeSet<Team>(teams);
 	}
 	
 	public Set<Snake> getSnakes()
@@ -78,19 +97,18 @@ public class Session implements Game
 	 */
 	public boolean hasEnded()
 	{
-		int numberOfLivingSnakes = snakes.size();
+		int numberOfTeamsLeft = teams.size();
 		
-		for (Snake snake : snakes)
-			if (snake.isDead())
-				--numberOfLivingSnakes;
-
-		if (numberOfLivingSnakes == 0 || (numberOfLivingSnakes < 2 && snakes.size() >= 2))
+		for (Team team : teams)
+			if (team.allDead())
+				--numberOfTeamsLeft;
+	
+		if (numberOfTeamsLeft == 0 || (numberOfTeamsLeft < 2 && teams.size() >= 2))
 			return true;
 		
-		
-		for (Snake snake : snakes)
+		for (Team team : teams)
 		{
-			if (snake.getScore() >= metadata.getFruitGoal())
+			if (team.getScore() >= metadata.getFruitGoal())
 				return true;
 		}
 
@@ -164,7 +182,7 @@ public class Session implements Game
 					errorState = snakeErrors.get(snake);
 					snakeErrors.remove(snake);
 				}
-				GameState currentGameState = new GameState(board, snakes, metadata, errorState);
+				GameState currentGameState = new GameState(board, snakes, teams, metadata, errorState);
 				BrainDecision bd = new BrainDecision(snake, currentGameState);
 				decisionThreads.put(snake, bd);
 			}

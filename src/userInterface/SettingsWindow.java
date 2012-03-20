@@ -86,10 +86,13 @@ public class SettingsWindow extends JFrame
 		float stepSize = 0.8f/numSnakes;
 		int currentSnake = 0;
 		
+		Team testTeam = new Team("TestTeam");
+		session.addTeam(testTeam);
+		
 		for (Map.Entry<String, Brain> snakeEntry : snakeSettingsPanel.getSnakes().entrySet())
 		{
 			Snake snake = new Snake(objectType, snakeEntry.getKey(), snakeEntry.getValue(), Color.getHSBColor(stepSize*currentSnake++, r.nextFloat()/2+0.5f, r.nextFloat()/2+0.5f));
-			session.addSnake(snake);
+			session.addSnake(snake, testTeam);
 		}
 		
 		session.prepareForStart();

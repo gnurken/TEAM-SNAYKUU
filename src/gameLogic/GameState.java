@@ -19,12 +19,14 @@ public class GameState
 	private ErrorState errorState;
 	private Board board;
 	private Set<Snake> snakes;
+	private Set<Team> teams;
 	private Metadata metadata;
 	
-	GameState(Board currentBoard, Set<Snake> snakes, Metadata metadata, ErrorState errorState)
+	GameState(Board currentBoard, Set<Snake> snakes, Set<Team> teams, Metadata metadata, ErrorState errorState)
 	{
 		board = new Board(currentBoard);
 		this.snakes = new HashSet<Snake>(snakes);
+		this.teams = new HashSet<Team>(teams);
 		this.metadata = metadata;
 		this.errorState = errorState;
 	}
@@ -38,6 +40,11 @@ public class GameState
 	public Set<Snake> getSnakes()
 	{
 		return snakes;
+	}
+	
+	public Set<Team> getTeams()
+	{
+		return teams;
 	}
 	
 	/**

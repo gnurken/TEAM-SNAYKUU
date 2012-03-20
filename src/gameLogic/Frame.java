@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class Frame implements Serializable
 {
 	private Board board;
+	private Set<Team> teams = new HashSet<Team>();
 	private Set<Snake> snakes = new HashSet<Snake>();
 	
 	public Frame(Board board, Set<Snake> snakes)
@@ -21,6 +22,11 @@ public class Frame implements Serializable
 	{
 		return board;
 	} 
+	
+	public Set<Team> getTeams()
+	{
+		return teams;
+	}
 	
 	public Set<Snake> getSnakes()
 	{
