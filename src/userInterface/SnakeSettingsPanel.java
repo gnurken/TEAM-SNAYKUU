@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import gameLogic.*;
+
 import java.util.Map;
 import java.util.TreeMap;
 import java.io.*;
@@ -18,6 +19,7 @@ class SnakeSettingsPanel extends JPanel
 	private JButton reloadAllBrainsButton;
 	private Map<String, String> snakes = new TreeMap<String, String>();
 	private Map<String, Class<? extends Brain>> brains = new TreeMap<String, Class<? extends Brain>>();
+	private Map<String, String> teams = new TreeMap<String, String>();
 	
 	public SnakeSettingsPanel()
 	{
@@ -72,6 +74,7 @@ class SnakeSettingsPanel extends JPanel
 		constraint.gridheight = 1;
 		constraint.gridx = 2;
 		constraint.gridy = 1;
+		constraint.anchor = NORTH;
 		
 			JLabel team1 = new JLabel("Team 1:");
 			team1.setHorizontalAlignment(JLabel.CENTER);
@@ -313,5 +316,10 @@ class SnakeSettingsPanel extends JPanel
 			snakeMap.put(snake.getKey(), brain);
 		}
 		return snakeMap;
+	}
+	
+	public Map<String, String> getTeams()
+	{
+		return new TreeMap<String, String>(teams);
 	}
 }
