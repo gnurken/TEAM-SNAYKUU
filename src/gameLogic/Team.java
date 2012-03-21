@@ -60,6 +60,18 @@ public class Team {
 		return score;
 	}
 	
+	public int getLifespan()
+	{
+		int lifespan = 0;
+		
+		for (Snake snake : snakes)
+		{
+			lifespan = Math.max(lifespan, snake.getLifespan());
+		}
+		
+		return lifespan;
+	}
+	
 	public String getName()
 	{
 		return name;
