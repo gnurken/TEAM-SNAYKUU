@@ -5,7 +5,10 @@ import java.awt.*;
 import java.awt.event.*;
 import gameLogic.*;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.io.*;
 import static java.awt.GridBagConstraints.*;
@@ -14,15 +17,15 @@ class SnakeSettingsPanel extends JPanel
 {
 	private JList snakeJList1, snakeJList2;
 	private JList brainJList;
-	private JButton addSnakeButton;
-	private JButton removeSnakeButton;
+	private JButton addSnakeButton1, addSnakeButton2;
+	private JButton removeSnakeButton1, removeSnakeButton2;
 	private JButton reloadAllBrainsButton;
 	private Map<String, String> snakes = new TreeMap<String, String>();
 	private Map<String, Class<? extends Brain>> brains = new TreeMap<String, Class<? extends Brain>>();
 	private Map<String, String> teams = new TreeMap<String, String>();
 	
 	public SnakeSettingsPanel()
-	{
+	{	
 		GridBagLayout gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		
@@ -61,7 +64,6 @@ class SnakeSettingsPanel extends JPanel
 		constraint.gridy = 1;
 		
 			brainJList = new JList();
-			brainJList.addMouseListener(new BrainMouseListener());
 			
 			JScrollPane jspb = new JScrollPane(brainJList);
 			jspb.setPreferredSize(jspb.getPreferredSize());
@@ -90,7 +92,6 @@ class SnakeSettingsPanel extends JPanel
 		constraint.gridy = 1;
 		
 			snakeJList1 = new JList();
-			snakeJList1.addMouseListener(new SnakeMouseListener());
 			
 			JScrollPane jsp1 = new JScrollPane(snakeJList1);
 			jsp1.setPreferredSize(jsp1.getPreferredSize());
@@ -118,7 +119,6 @@ class SnakeSettingsPanel extends JPanel
 		constraint.gridy = 4;
 		
 			snakeJList2 = new JList();
-			snakeJList2.addMouseListener(new SnakeMouseListener());
 			
 			JScrollPane jsp2 = new JScrollPane(snakeJList2);
 			jsp1.setPreferredSize(jsp2.getPreferredSize());
@@ -134,10 +134,10 @@ class SnakeSettingsPanel extends JPanel
 		constraint.anchor = SOUTH;
 		constraint.gridy = 0;
 		
-			addSnakeButton = new JButton("=>");
-			addSnakeButton.addActionListener(new AddSnakeListener());
-			gridbag.setConstraints(addSnakeButton, constraint);
-			add(addSnakeButton);
+			addSnakeButton1 = new JButton("Team 1");
+			addSnakeButton1.addActionListener(new AddSnakeTeam1Listener());
+			gridbag.setConstraints(addSnakeButton1, constraint);
+			add(addSnakeButton1);
 		
 		constraint.fill = NONE;
 		constraint.weightx = 0.1;
@@ -148,11 +148,39 @@ class SnakeSettingsPanel extends JPanel
 		constraint.anchor = NORTH;
 		constraint.gridy = 4;
 		
-			removeSnakeButton = new JButton("<=");
-			removeSnakeButton.addActionListener(new RemoveSnakeListener());
-			gridbag.setConstraints(removeSnakeButton, constraint);
-			add(removeSnakeButton);
+			addSnakeButton2 = new JButton("Team 2");
+			addSnakeButton2.addActionListener(new AddSnakeTeam2Listener());
+			gridbag.setConstraints(addSnakeButton2, constraint);
+			add(addSnakeButton2);
+			
+		constraint.fill = NONE;
+		constraint.weightx = 0.1;
+		constraint.weighty = 0.1;
+		constraint.insets = new Insets(4, 4, 4, 4);
+		constraint.gridheight = 4;
+		constraint.gridx = 1;
+		constraint.anchor = CENTER;
+		constraint.gridy = 3;
+			
+			removeSnakeButton1 = new JButton("RM T1");
+			removeSnakeButton1.addActionListener(new RemoveSnakeTeam1Listener());
+			gridbag.setConstraints(removeSnakeButton1, constraint);
+			add(removeSnakeButton1);
 		
+		constraint.fill = NONE;
+		constraint.weightx = 0.1;
+		constraint.weighty = 0.1;
+		constraint.insets = new Insets(4, 4, 4, 4);
+		constraint.gridheight = 4;
+		constraint.gridx = 1;
+		constraint.anchor = SOUTH;
+		constraint.gridy = 4;
+			
+			removeSnakeButton2 = new JButton("RM T2");
+			removeSnakeButton2.addActionListener(new RemoveSnakeTeam2Listener());
+			gridbag.setConstraints(removeSnakeButton2, constraint);
+			add(removeSnakeButton2);
+			
 		constraint.fill = NONE;
 		constraint.weightx = 0.1;
 		constraint.weighty = 0.1;
@@ -231,22 +259,8 @@ class SnakeSettingsPanel extends JPanel
 
 	
 		
-	private class AddSnakeListener implements ActionListener
-	{
-		private String generateSnakeName(String name)
-		{
-			String snakeName = name;
-			int numberOfSnakesWithTheSameBrain = 1;
-			
-			while (snakes.containsKey(snakeName))
-			{
-				++numberOfSnakesWithTheSameBrain;
-				snakeName = name + "#" + numberOfSnakesWithTheSameBrain;
-			}
-			
-			return snakeName;
-		}
-		
+	private class AddSnakeTeam1Listener implements ActionListener
+	{	
 		public void actionPerformed(ActionEvent event)
 		{
 			Object selectedObject = brainJList.getSelectedValue();
@@ -255,14 +269,62 @@ class SnakeSettingsPanel extends JPanel
 			
 			
 			String name = selectedObject.toString();
+			String snakeName = generateSnakeName(name);
+			String teamName = "Team 1";
 			
-			snakes.put(generateSnakeName(name), name);
-				
-			snakeJList1.setListData(snakes.keySet().toArray());
+			snakes.put(snakeName, name);
+			teams.put(snakeName, teamName);
+			
+			snakeJList1.setListData(getSnakesOnTeam(teamName).toArray());
 		}
 	}
 	
-	private class RemoveSnakeListener implements ActionListener
+	private class AddSnakeTeam2Listener implements ActionListener
+	{	
+		public void actionPerformed(ActionEvent event)
+		{
+			Object selectedObject = brainJList.getSelectedValue();
+			if (selectedObject == null)
+				return;
+			
+			
+			String name = selectedObject.toString();
+			String snakeName = generateSnakeName(name);
+			String teamName = "Team 2";
+			
+			snakes.put(snakeName, name);
+			teams.put(snakeName, teamName);
+			
+			snakeJList2.setListData(getSnakesOnTeam(teamName).toArray());
+		}
+	}
+	
+	private String generateSnakeName(String name)
+	{
+		String snakeName = name;
+		int numberOfSnakesWithTheSameBrain = 1;
+		
+		while (snakes.containsKey(snakeName))
+		{
+			++numberOfSnakesWithTheSameBrain;
+			snakeName = name + "#" + numberOfSnakesWithTheSameBrain;
+		}
+		
+		return snakeName;
+	}
+	
+	public ArrayList<String> getSnakesOnTeam(String team) {
+		ArrayList<String> teamNames = new ArrayList<String>();
+		
+		for (Map.Entry<String, String> teamEntry : teams.entrySet())
+		{
+			if (teamEntry.getValue().equals(team))
+				teamNames.add(teamEntry.getKey());
+		}
+		return teamNames;
+	}
+
+	private class RemoveSnakeTeam1Listener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent event)
 		{
@@ -270,9 +332,29 @@ class SnakeSettingsPanel extends JPanel
 			if (selectedObject == null)
 				return;
 			
-			snakes.remove(selectedObject.toString());
+			String snakeName = selectedObject.toString();
 			
-			snakeJList1.setListData(snakes.keySet().toArray());
+			snakes.remove(snakeName);
+			teams.remove(snakeName);
+			
+			snakeJList1.setListData(getSnakesOnTeam("Team 1").toArray());
+		}
+	}
+	
+	private class RemoveSnakeTeam2Listener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			Object selectedObject = snakeJList2.getSelectedValue();
+			if (selectedObject == null)
+				return;
+			
+			String snakeName = selectedObject.toString();
+			
+			snakes.remove(snakeName);
+			teams.remove(snakeName);
+			
+			snakeJList1.setListData(getSnakesOnTeam("Team 2").toArray());
 		}
 	}
 	
@@ -282,28 +364,6 @@ class SnakeSettingsPanel extends JPanel
 		{
 			String reloadedBrains = loadBrains();
 			JOptionPane.showMessageDialog(SnakeSettingsPanel.this, "Successfully reloaded:\n" + reloadedBrains);
-		}
-	}
-	
-	private class SnakeMouseListener extends MouseAdapter
-	{
-		public void mouseClicked(MouseEvent e)
-		{
-			if (e.getClickCount() % 2 == 0)
-			{
-				new RemoveSnakeListener().actionPerformed(null);
-			}
-		}
-	}
-	
-	private class BrainMouseListener extends MouseAdapter
-	{
-		public void mouseClicked(MouseEvent e)
-		{
-			if (e.getClickCount() % 2 == 0)
-			{
-				new AddSnakeListener().actionPerformed(null);
-			}
 		}
 	}
 	
