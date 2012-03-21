@@ -6,6 +6,9 @@ import java.awt.event.*;
 import gameLogic.*;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class SettingsWindow extends JFrame
 {
@@ -86,19 +89,37 @@ public class SettingsWindow extends JFrame
 		float stepSize = 0.8f/numSnakes;
 		int currentSnake = 0;
 		
-		Team testTeam = new Team("TestTeam");
-		session.addTeam(testTeam);
+		Map<String, Team> teams = createTeams(session);
 		
-		for (Map.Entry<String, Brain> snakeEntry : snakeSettingsPanel.getSnakes().entrySet())
+		for (Map.Entry<String, String> teamEntry : snakeSettingsPanel.getTeams().entrySet())
 		{
-			Snake snake = new Snake(objectType, snakeEntry.getKey(), snakeEntry.getValue(), Color.getHSBColor(stepSize*currentSnake++, r.nextFloat()/2+0.5f, r.nextFloat()/2+0.5f));
-			session.addSnake(snake, testTeam);
+			Team team = teams.get(teamEntry.getValue());
+			String snakeName = teamEntry.getKey();
+			Brain brain = snakeSettingsPanel.getSnakes().get(snakeName);
+			
+			Snake snake = new Snake(objectType, snakeName, brain, Color.getHSBColor(stepSize*currentSnake++, r.nextFloat()/2+0.5f, r.nextFloat()/2+0.5f));
+			session.addSnake(snake, team);
 		}
 		
 		session.prepareForStart();
 		return session;
 	}
 	
+	private Map<String, Team> createTeams(Session session) 
+	{
+		TreeSet<String> teamNames = new TreeSet<String>(snakeSettingsPanel.getTeams().values());
+		TreeMap<String, Team> teams = new TreeMap<String, Team>();
+		
+		for (String s : teamNames)
+		{
+			Team team = new Team(s);
+			session.addTeam(team);
+			teams.put(s, team);
+		}
+		
+		return teams;
+	}
+
 	public int getGameSpeed()
 	{
 		return gameSettingsPanel.getGameSpeed();
