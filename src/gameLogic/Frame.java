@@ -8,14 +8,13 @@ public class Frame implements Serializable
 {
 	private Board board;
 	private Set<Team> teams = new HashSet<Team>();
-	private Set<Snake> snakes = new HashSet<Snake>();
 	
-	public Frame(Board board, Set<Snake> snakes)
+	public Frame(Board board, Set<Team> teams)
 	{
 		this.board = new Board(board);
 
-		for (Snake snake : snakes)
-			this.snakes.add(new Snake(snake));
+		for (Team team : teams)
+			this.teams.add(new Team(team));
 	}
 	
 	public Board getBoard()
@@ -30,6 +29,13 @@ public class Frame implements Serializable
 	
 	public Set<Snake> getSnakes()
 	{
+		Set<Snake> snakes = new HashSet<Snake>();
+		
+		for (Team team : teams)
+		{
+			snakes.addAll(team.getSnakes());
+		}
+		
 		return snakes;
 	}
 }

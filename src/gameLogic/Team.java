@@ -14,6 +14,16 @@ public class Team {
 		name = n;
 	}
 	
+	public Team(Team other)
+	{
+		name = other.name;
+		
+		for (Snake snake : other.getSnakes())
+		{
+			snakes.add(snake);
+		}
+	}
+	
 	public Set<Snake> getSnakes()
 	{
 		return new HashSet<Snake>(snakes);

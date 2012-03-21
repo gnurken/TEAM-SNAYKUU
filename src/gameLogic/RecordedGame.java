@@ -15,10 +15,10 @@ public class RecordedGame implements Game, Serializable
 		this.metadata = metadata;
 	}
 	
-	public RecordedGame(Metadata metadata, Board startBoard, Set<Snake> snakes)
+	public RecordedGame(Metadata metadata, Board startBoard, Set<Team> teams)
 	{
 		this.metadata = metadata;
-		this.frames.addFirst(new Frame(startBoard, snakes));
+		this.frames.addFirst(new Frame(startBoard, teams));
 	}
 	
 	public int getTurnCount()

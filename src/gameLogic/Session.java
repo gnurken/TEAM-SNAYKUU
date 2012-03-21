@@ -14,7 +14,6 @@ import java.util.*;
 public class Session implements Game
 {
 	private Board board;
-	private Set<Snake> snakes = new HashSet<Snake>();
 	private Set<Team> teams = new HashSet<Team>();
 	private Map<Snake, ErrorState> snakeErrors = new HashMap<Snake, ErrorState>();
 	
@@ -37,7 +36,7 @@ public class Session implements Game
 	
 	public GameState getCurrentState()
 	{
-		return new GameState(board, snakes, teams, metadata, ErrorState.NO_ERROR);
+		return new GameState(board, getSnakes(), teams, metadata, ErrorState.NO_ERROR);
 	}
 	
 	public Metadata getMetadata()
@@ -62,7 +61,6 @@ public class Session implements Game
 		else if (!teams.contains(team))
 			throw new IllegalArgumentException("Trying to add snake to a team that has not been added.");
 		
-		snakes.add(newSnake);
 		team.addSnake(newSnake);
 	}
 	
@@ -78,14 +76,21 @@ public class Session implements Game
 	
 	public Set<Snake> getSnakes()
 	{
-		return new HashSet<Snake>(snakes);
+		Set<Snake> snakes = new HashSet<Snake>();
+		
+		for (Team team : teams)
+		{
+			snakes.addAll(team.getSnakes());
+		}
+		
+		return snakes;
 	}
 	
 	public void prepareForStart()
 	{
 		placeSnakesOnBoard();
 		
-		recordedGame = new RecordedGame(metadata, board, snakes);
+		recordedGame = new RecordedGame(metadata, board, teams);
 	}
 	
 	/**
@@ -124,7 +129,7 @@ public class Session implements Game
 	 */
 	public GameResult getGameResult()
 	{
-		return new GameResult(snakes, metadata, recordedGame);
+		return new GameResult(getSnakes(), metadata, recordedGame);
 	}
 	
 	/**
@@ -139,13 +144,13 @@ public class Session implements Game
 		checkForCollision();
 		perhapsSpawnFruit();
 		
-		Frame frame = new Frame(board, snakes);
+		Frame frame = new Frame(board, teams);
 		recordedGame.addFrame(frame);
 	}
 	
 	public void cleanup()
 	{
-		for (Snake snake : snakes)
+		for (Snake snake : getSnakes())
 			snake.removeBrain();
 	}
 	
@@ -170,6 +175,8 @@ public class Session implements Game
 		Map<Snake, BrainDecision> decisionThreads = new HashMap<Snake, BrainDecision>();
 		Map<Snake, Direction> moves = new HashMap<Snake, Direction>();
 		//~ Using a HashMap here since I'm unsure of the sorting order of snakes.values() below.
+		
+		Set<Snake> snakes = getSnakes();
 		
 		//~ Prepare some decision threads.
 		for (Snake snake : snakes)
@@ -323,7 +330,7 @@ public class Session implements Game
 	 */
 	private void checkForCollision()
 	{
-		for (Snake snake : snakes) 
+		for (Snake snake : getSnakes()) 
 		{
 			if (snake.isDead())
 				continue;
@@ -402,6 +409,8 @@ public class Session implements Game
 	
 	private void placeSnakesOnBoard()
 	{
+		Set<Snake> snakes = getSnakes();
+		
 		Position[] startingPositions = getStartingHeadPositions(snakes.size(), board.getWidth(), board.getHeight());
 		Collections.shuffle(Arrays.asList(startingPositions));
 		int positionIndex = 0;
