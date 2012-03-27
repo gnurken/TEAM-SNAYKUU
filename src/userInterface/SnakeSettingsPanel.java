@@ -354,7 +354,7 @@ class SnakeSettingsPanel extends JPanel
 			snakes.remove(snakeName);
 			teams.remove(snakeName);
 			
-			snakeJList1.setListData(getSnakesOnTeam("Team 2").toArray());
+			snakeJList2.setListData(getSnakesOnTeam("Team 2").toArray());
 		}
 	}
 	
