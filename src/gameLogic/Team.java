@@ -1,5 +1,7 @@
 package gameLogic;
 
+import userInterface.GraphicsTile;
+
 import java.util.Set;
 import java.util.HashSet;
 
@@ -9,9 +11,16 @@ public class Team {
 	private Set<Snake> snakes = new HashSet<Snake>();
 	private String name;
 	
-	public Team(String n)
+	private GraphicsTile teamNumberTile = GraphicsTile.UNKNOWN_TEAM;
+	
+	public Team(String n, int nr)
 	{
 		name = n;
+		
+		if (nr == 1)
+			teamNumberTile = GraphicsTile.TEAM_1;
+		else if (nr == 2)
+			teamNumberTile = GraphicsTile.TEAM_2;
 	}
 	
 	public Team(Team other)
@@ -22,6 +31,8 @@ public class Team {
 		{
 			snakes.add(snake);
 		}
+		
+		teamNumberTile = other.teamNumberTile;
 	}
 	
 	public Set<Snake> getSnakes()
@@ -32,6 +43,11 @@ public class Team {
 	public int getSize()
 	{
 		return snakes.size();
+	}
+	
+	public boolean contains(Snake snake)
+	{
+		return snakes.contains(snake);
 	}
 	
 	public void addSnake(Snake newSnake)
@@ -80,6 +96,11 @@ public class Team {
 	public String toString()
 	{
 		return getName();
+	}
+	
+	public GraphicsTile getTeamNumberTile()
+	{
+		return teamNumberTile;
 	}
 	
 }

@@ -110,9 +110,10 @@ public class SettingsWindow extends JFrame
 		TreeSet<String> teamNames = new TreeSet<String>(snakeSettingsPanel.getTeams().values());
 		TreeMap<String, Team> teams = new TreeMap<String, Team>();
 		
+		int nr = 1;
 		for (String s : teamNames)
 		{
-			Team team = new Team(s);
+			Team team = new Team(s, nr++);
 			session.addTeam(team);
 			teams.put(s, team);
 		}

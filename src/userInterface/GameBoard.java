@@ -95,10 +95,12 @@ class GameBoard extends JComponent
 				Direction useDir = dir;
 				
 				GraphicsTile segment;
+				boolean isHead = false;
 				
 				if(prevDir == null && !iter.hasNext()) // only element
 				{
 					segment = GraphicsTile.SNAKEMONAD;
+					isHead = true;
 				}
 				else if(prevDir == null) //first element
 				{
@@ -106,6 +108,8 @@ class GameBoard extends JComponent
 
 					if (s.isDead())
 						segment = GraphicsTile.SNAKEDEAD;
+					
+					isHead = true;
 				}
 				else if(!iter.hasNext()) // last element
 				{
@@ -132,6 +136,25 @@ class GameBoard extends JComponent
 				
 				g2d.drawImage(segment.getImage(s.getColor()), transform, null);
 				
+				// Draw team number on head
+				if (isHead)
+				{
+					GraphicsTile teamNumber = null;
+					for (Team t : gs.getTeams())
+					{
+						if (t.contains(s))
+						{
+							teamNumber = t.getTeamNumberTile();
+						}
+					}
+					
+					if (teamNumber != null)
+					{
+						transform = segment.getTransformation(Direction.EAST, pos, pixelsPerXUnit, pixelsPerYUnit);
+						g2d.drawImage(teamNumber.getImage(s.getColor()), transform, null);
+					}
+				}
+					
 				prevDir = dir;
 			}
 		}

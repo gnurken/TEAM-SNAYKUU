@@ -10,7 +10,7 @@ import java.net.URL;
 import gameLogic.Direction;
 import gameLogic.Position;
 
-enum GraphicsTile
+public enum GraphicsTile
 {
 	SNAKEHEAD("snake_head.png"),
 	SNAKETAIL("snake_tail.png"),
@@ -20,7 +20,10 @@ enum GraphicsTile
 	SNAKEMONAD("snake_monad.png"),
 	SNAKEDEAD("snake_dead.png"),
 	FRUIT("fruit.png"),
-	WALL("wall.png");
+	WALL("wall.png"),
+	TEAM_1("team_1.png"),
+	TEAM_2("team_2.png"),
+	UNKNOWN_TEAM("unknown_team.png");
 	
 	private Image image;
 	private int imgHeight;
