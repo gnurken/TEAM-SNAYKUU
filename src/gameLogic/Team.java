@@ -10,12 +10,14 @@ public class Team {
 
 	private Set<Snake> snakes = new HashSet<Snake>();
 	private String name;
+	private int nr;
 	
 	private GraphicsTile teamNumberTile = GraphicsTile.UNKNOWN_TEAM;
 	
 	public Team(String n, int nr)
 	{
 		name = n;
+		this.nr = nr;
 		
 		if (nr == 1)
 			teamNumberTile = GraphicsTile.TEAM_1;
@@ -26,6 +28,7 @@ public class Team {
 	public Team(Team other)
 	{
 		name = other.name;
+		nr = other.nr;
 		
 		for (Snake snake : other.getSnakes())
 		{
@@ -91,6 +94,11 @@ public class Team {
 	public String getName()
 	{
 		return name;
+	}
+	
+	public int getNumber()
+	{
+		return nr;
 	}
 	
 	public String toString()

@@ -1,6 +1,7 @@
 package gameLogic;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.awt.Color;
 
@@ -226,5 +227,16 @@ public class Snake extends GameObject implements Serializable
 	public String getName()
 	{
 		return name;
+	}
+	
+	public static class ScoreComparator implements Comparator<Snake>
+	{
+		public int compare(Snake first, Snake second)
+		{
+			int comparedLifespan = second.getLifespan() - first.getLifespan();
+			if (comparedLifespan != 0)
+				return comparedLifespan;
+			return second.getScore() - first.getScore();
+		}
 	}
 }

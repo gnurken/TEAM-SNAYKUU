@@ -46,7 +46,7 @@ public class RecordedGame implements Game, Serializable
 	public GameResult getGameResult()
 	{
 		Frame currentFrame = frames.get(currentFrameIndex);
-		return new GameResult(currentFrame.getSnakes(), metadata, this);
+		return new GameResult(currentFrame.getTeams(), metadata, this);
 	}
 	
 	public int getCurrentReplayFrame()

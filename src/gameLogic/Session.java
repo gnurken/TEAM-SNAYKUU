@@ -71,7 +71,7 @@ public class Session implements Game
 	
 	public Set<Team> getTeams()
 	{
-		return new TreeSet<Team>(teams);
+		return new HashSet<Team>(teams);
 	}
 	
 	public Set<Snake> getSnakes()
@@ -129,7 +129,7 @@ public class Session implements Game
 	 */
 	public GameResult getGameResult()
 	{
-		return new GameResult(getSnakes(), metadata, recordedGame);
+		return new GameResult(getTeams(), metadata, recordedGame);
 	}
 	
 	/**

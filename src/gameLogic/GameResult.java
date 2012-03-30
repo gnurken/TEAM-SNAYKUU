@@ -1,5 +1,6 @@
 package gameLogic;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
@@ -7,14 +8,14 @@ import java.util.Comparator;
 
 public class GameResult
 {
-	private Set<Snake> snakes;
+	private Set<Team> teams;
 	private Metadata metadata;
 	private RecordedGame recordedGame;
 	
-	public GameResult(Set<Snake> snakes, Metadata metadata, RecordedGame recordedGame)
+	public GameResult(Set<Team> teams, Metadata metadata, RecordedGame recordedGame)
 	{
 		this.metadata = metadata;		
-		this.snakes = snakes;
+		this.teams = teams;
 		this.recordedGame = recordedGame;
 	}
 	
@@ -23,39 +24,13 @@ public class GameResult
 		return recordedGame;
 	}
 	
-	public List<List<Snake>> getWinners()
+	public List<Team> getTeams()
 	{
-		ArrayList<List<Snake>> results = new ArrayList<List<Snake>>();
-		SnakeComparator snakeComparator = new SnakeComparator();
-		for (Snake snake : snakes)
-		{
-			int index;
-			boolean addedToExistingList = false;
-			for (index = 0; index < results.size(); ++index)
-			{
-				Snake examinedSnake = results.get(index).get(0);
-				int comparisonResult = snakeComparator.compare(snake, examinedSnake);
-				
-				if (comparisonResult > 0)
-				{
-					break;
-				}
-				else if (comparisonResult == 0)
-				{
-					results.get(index).add(snake);
-					addedToExistingList = true;
-				}
-			}
-			if (!addedToExistingList)
-			{
-				ArrayList<Snake> newPlacement = new ArrayList<Snake>();
-				newPlacement.add(snake);
-				results.add(index, newPlacement);
-			}
-		}
-		return results;
+		List<Team> result = new ArrayList<Team>(teams);
+		Collections.sort(result, new TeamComparator());
+		return result;
 	}
-	
+	/*
 	public String toString()
 	{
 		List<List<Snake>> winners = getWinners();
@@ -75,15 +50,16 @@ public class GameResult
 		
 		return retVal;
 	}
+	*/
 	
-	private static class SnakeComparator implements Comparator<Snake>
+	private static class TeamComparator implements Comparator<Team>
 	{
-		public int compare(Snake first, Snake second)
+		public int compare(Team first, Team second)
 		{
-			int comparedLifespan = first.getLifespan() - second.getLifespan();
-			if (comparedLifespan != 0)
+			int comparedLifespan = second.getLifespan() - first.getLifespan();
+			if(comparedLifespan != 0)
 				return comparedLifespan;
-			return first.getScore() - second.getScore();
+			return second.getScore() - first.getScore();
 		}
 	}
 }

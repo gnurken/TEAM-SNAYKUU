@@ -163,13 +163,14 @@ class DeveloperPanel extends JPanel
 						while (!session.hasEnded())
 							session.tick();
 						
-						List<List<Snake>> result = session.getGameResult().getWinners();
+						List<Team> result = session.getGameResult().getTeams();
 						
-						for(int i = 0; i < result.size(); ++i)
+						for(Team t : result)
 						{
-							for(Snake s : result.get(i))
+							for(Snake s : t.getSnakes())
 							{
-								scores.get(s.getName()).addResult(i);
+								//TODO fixa
+								//scores.get(s.getName()).addResult(i);
 							}
 						}
 					}
