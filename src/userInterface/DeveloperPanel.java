@@ -2,6 +2,7 @@ package userInterface;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -145,11 +146,10 @@ class DeveloperPanel extends JPanel
 				Session session = settingsWindow.generateSession();
 				
 				HashMap<String, Results> scores = new HashMap<String, Results>();
-				int numSnakes = session.getSnakes().size();
 				
-				for(Snake s : session.getSnakes())
+				for(Team t : session.getTeams())
 				{
-					scores.put(s.getName(), new Results(numSnakes));
+					scores.put(t.getName(), new Results());
 				}
 				
 				final int numberOfGames = Integer.parseInt(numberOfRuns.getText());
@@ -160,18 +160,19 @@ class DeveloperPanel extends JPanel
 					try
 					{
 						session = settingsWindow.generateSession();
+						
+						//TODO fixa med snapshots hära
 						while (!session.hasEnded())
 							session.tick();
 						
 						List<Team> result = session.getGameResult().getTeams();
 						
+						int placement = 0;
 						for(Team t : result)
 						{
-							for(Snake s : t.getSnakes())
-							{
-								//TODO fixa
-								//scores.get(s.getName()).addResult(i);
-							}
+							int score = t.getScore();
+							int age = t.getLifespan();
+							scores.get(t.getName()).addResult(placement++, score, age);
 						}
 					}
 					catch (Exception e)
@@ -182,13 +183,13 @@ class DeveloperPanel extends JPanel
 				
 				for(Map.Entry<String, Results> me : scores.entrySet())
 				{
-					println(me.getKey()+" (place: frequency)");
+					//TODO fixa att den skriver till fil också
+					println(me.getKey()+" (place: frequency : avgscore)");
 					Results r = me.getValue();
 					
-					for(int i = 0; i < numSnakes; ++i)
-					{
-						println("\t"+(i+1)+": "+r.getFreq(i)+" times");
-					}
+					println("\t"+ 1 +": "+r.getFreq(0)+" times : " + r.getAvgScore());
+					println("\t"+ 2 +": "+r.getFreq(1)+" times : " + r.getAvgScore());
+					
 				}
 				
 				println("DONE");
@@ -203,25 +204,57 @@ class DeveloperPanel extends JPanel
 	private class Results
 	{
 		private int[] placements;
+		private ArrayList<Integer> scores = new ArrayList<Integer>();
+		private ArrayList<Integer> ages = new ArrayList<Integer>();
 		
-		public Results(int numSnakes)
+		public Results()
 		{
-			placements = new int[numSnakes];
+			placements = new int[2];
 			
-			for(int i = 0; i < placements.length; ++i)
-			{
-				placements[i] = 0;
-			}
+			placements[0] = 0;
+			placements[1] = 0;			
 		}
 		
-		void addResult(int i)
+		void addResult(int p, int s, int a)
 		{
-			placements[i] += 1;
+			placements[p] += 1;
+			scores.add(s);
+			ages.add(a);
 		}
 		
 		int getFreq(int place)
 		{
 			return placements[place];
+		}
+		
+		List<Integer> getScores()
+		{
+			return new ArrayList<Integer>(scores);
+		}
+		
+		List<Integer> getAges()
+		{
+			return new ArrayList<Integer>(ages);
+		}
+		
+		int getAvgScore()
+		{
+			int sum = 0;
+			for(Integer i : scores)
+			{
+				sum += i;
+			}
+			return sum/scores.size();
+		}
+		
+		int getAvgAge()
+		{
+			int sum = 0;
+			for (Integer i : scores)
+			{
+				sum += i;
+			}
+			return sum/ages.size();
 		}
 	}
 }
