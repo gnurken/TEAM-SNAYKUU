@@ -2,11 +2,13 @@ package gameLogic;
 
 import userInterface.GraphicsTile;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
 
 
-public class Team {
+public class Team implements Serializable
+{
 
 	private Set<Snake> snakes = new HashSet<Snake>();
 	private String name;
