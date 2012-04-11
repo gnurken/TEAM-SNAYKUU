@@ -1,0 +1,11 @@
+# Copyright 2012 Thomas Zebühr and Daniel Malmqvist
+
+parent.0 = kaza.params
+
+# Number of trees per individual
+pop.subpop.0.species.ind.numtrees = 2
+
+# Number of generations
+generations = 100
+
+
