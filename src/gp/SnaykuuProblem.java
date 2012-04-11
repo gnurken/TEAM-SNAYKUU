@@ -29,6 +29,9 @@ public class SnaykuuProblem extends GPProblem
 	
 	public DirectionData input;
 	
+	static private GameObjectType objectType = new GameObjectType("Snake", true);
+	static private final int gamesPerEval = 10;
+	
 	public Object clone()
 	{
 		SnaykuuProblem newProblem = (SnaykuuProblem)super.clone();
@@ -50,46 +53,46 @@ public class SnaykuuProblem extends GPProblem
 	public void evaluate(EvolutionState state, Individual ind,
 						 int subpopulation, int threadnum)
 	{
-		
 		if (!ind.evaluated)
 		{
-			GameObjectType objectType = new GameObjectType("Snake", true);
-			
-			Metadata metadata = null;
-			Session session = new Session(metadata);
-			
-			Team contestants = new Team("Contestants", 1);
-			session.addTeam(contestants);
-			
-			GPIndividual individual = (GPIndividual)ind;
-			int snakesPerTeam = individual.trees.length;
-			for (int i = 0; i < snakesPerTeam; ++i)
+			for (int game = 0; game < gamesPerEval; ++game)
 			{
-				GPNode root = individual.trees[i].child;
+				Metadata metadata = null;
+				Session session = new Session(metadata);
 				
-				GPBrain brain = new GPBrain();
-				brain.setup(root, state, threadnum, stack, individual, this, input);
+				Team contestants = new Team("Contestants", 1);
+				session.addTeam(contestants);
 				
-				Snake snake = new Snake(objectType, "Contestant" + i, brain, Color.BLUE);
-				session.addSnake(snake, contestants);
+				GPIndividual individual = (GPIndividual)ind;
+				int snakesPerTeam = individual.trees.length;
+				for (int i = 0; i < snakesPerTeam; ++i)
+				{
+					GPNode root = individual.trees[i].child;
+					
+					GPBrain brain = new GPBrain();
+					brain.setup(root, state, threadnum, stack, individual, this, input);
+					
+					Snake snake = new Snake(objectType, "Contestant" + i, brain, Color.BLUE);
+					session.addSnake(snake, contestants);
+				}
+				
+				// Create Opponent team
+				Team opponents = new Team("Opponents", 2);
+				session.addTeam(opponents);
+				
+				for (int i = 0; i < snakesPerTeam; ++i)
+				{
+					Snake snake = new Snake(objectType, "Opponent" + i, new FruitEaterBot(), Color.RED);
+					session.addSnake(snake, opponents);
+				}
+				
+				session.prepareForStart();
+				
+				while (!session.hasEnded())
+					session.tick();
+				
+				List<Team> result = session.getGameResult().getTeams();
 			}
-			
-			// Create Opponent team
-			Team opponents = new Team("Opponents", 2);
-			session.addTeam(opponents);
-			
-			for (int i = 0; i < snakesPerTeam; ++i)
-			{
-				Snake snake = new Snake(objectType, "Opponent" + i, new FruitEaterBot(), Color.RED);
-				session.addSnake(snake, opponents);
-			}
-			
-			session.prepareForStart();
-			
-			while (!session.hasEnded())
-				session.tick();
-			
-			List<Team> result = session.getGameResult().getTeams();
 			
 			// TODO: evaluate fitness
 			((KozaFitness)ind.fitness).setStandardizedFitness(state, 1.0f);
@@ -97,5 +100,4 @@ public class SnaykuuProblem extends GPProblem
 			ind.evaluated = true;
 		}
 	}
-
 }
