@@ -14,7 +14,7 @@ public class DirectionNode extends ERC
 	@Override
 	public String toString() 
 	{
-		return "direction(" + direction.toString() + ")";
+		return "direction";
 	}
 
 	@Override
