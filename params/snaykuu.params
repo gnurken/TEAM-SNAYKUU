@@ -31,8 +31,8 @@ gp.fs.0.name = f0
 
 # Functions 
 gp.fs.0.size = 1
-gp.fs.0.func.0 = ../src/gp.DirectionNode
+gp.fs.0.func.0 = gp.DirectionNode
 
 # Problem
-eval.problem = ../src/gp.SnaykuuProblem
-eval.problem.data = ../src/gp.DirectionData
+eval.problem = gp.SnaykuuProblem
+eval.problem.data = gp.DirectionData
