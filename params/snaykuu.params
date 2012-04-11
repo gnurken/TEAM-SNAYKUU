@@ -1,6 +1,6 @@
 # Copyright 2012 Thomas Zebühr and Daniel Malmqvist
 
-parent.0 = kaza.params
+parent.0 = koza.params
 
 # Number of trees per individual
 pop.subpop.0.species.ind.numtrees = 2
