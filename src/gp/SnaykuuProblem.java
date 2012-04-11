@@ -32,6 +32,8 @@ public class SnaykuuProblem extends GPProblem
 	static private GameObjectType objectType = new GameObjectType("Snake", true);
 	static private final int gamesPerEval = 10;
 	
+	static private int bw = 30, bh = 30, gf = 5, ff = 10, tt = 1000, fg = 10;
+	
 	public Object clone()
 	{
 		SnaykuuProblem newProblem = (SnaykuuProblem)super.clone();
@@ -57,7 +59,9 @@ public class SnaykuuProblem extends GPProblem
 		{
 			for (int game = 0; game < gamesPerEval; ++game)
 			{
-				Metadata metadata = null;
+				System.out.println("starting game.");
+				
+				Metadata metadata = new Metadata(bw, bh, gf, ff, tt, fg);
 				Session session = new Session(metadata);
 				
 				Team contestants = new Team("Contestants", 1);
@@ -89,7 +93,10 @@ public class SnaykuuProblem extends GPProblem
 				session.prepareForStart();
 				
 				while (!session.hasEnded())
+				{
+					System.out.println("tick");
 					session.tick();
+				}
 				
 				List<Team> result = session.getGameResult().getTeams();
 			}

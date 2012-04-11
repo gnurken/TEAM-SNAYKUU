@@ -4,6 +4,10 @@ parent.0 = koza.params
 
 # Number of trees per individual
 pop.subpop.0.species.ind.numtrees = 2
+pop.subpop.0.species.ind.tree.0 = ec.gp.GPTree
+pop.subpop.0.species.ind.tree.0.tc = tc0
+pop.subpop.0.species.ind.tree.1 = ec.gp.GPTree
+pop.subpop.0.species.ind.tree.1.tc = tc0
 
 # Number of generations
 generations = 100
@@ -15,6 +19,14 @@ gp.type.a.0.name = direction
 
 # Set types
 gp.type.s.size = 0
+
+# GPTreeConstraints
+gp.tc.size = 1
+gp.tc.0 = ec.gp.GPTreeConstraints
+gp.tc.0.name = tc0
+gp.tc.0.fset = f0
+gp.tc.0.returns = direction
+
 
 # GPNodeConstraints
 gp.nc.size = 1
@@ -32,6 +44,7 @@ gp.fs.0.name = f0
 # Functions 
 gp.fs.0.size = 1
 gp.fs.0.func.0 = gp.DirectionNode
+gp.fs.0.func.0.nc = singleDirection
 
 # Problem
 eval.problem = gp.SnaykuuProblem
