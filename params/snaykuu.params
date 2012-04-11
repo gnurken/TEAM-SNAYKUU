@@ -8,4 +8,31 @@ pop.subpop.0.species.ind.numtrees = 2
 # Number of generations
 generations = 100
 
+# Types
+# Atomic types
+gp.type.a.size = 1
+gp.type.a.0.name = direction
 
+# Set types
+gp.type.s.size = 0
+
+# GPNodeConstraints
+gp.nc.size = 1
+
+gp.nc.0 = ec.gp.GPNodeConstraints
+gp.nc.0.name = singleDirection
+gp.nc.0.returns direction
+gp.nc.0.size = 0
+
+# Function sets
+gp.fs.size = 1
+gp.fs.0 = ec.gp.GPFunctionSet
+gp.fs.0.name = f0
+
+# Functions 
+gp.fs.0.size = 1
+gp.fs.0.func.0 = ../src/gp.DirectionNode
+
+# Problem
+eval.problem = ../src/gp.SnaykuuProblem
+eval.problem.data = ../src/gp.DirectionData
