@@ -17,11 +17,13 @@ generations = 1
 
 # Types
 # Atomic types
-gp.type.a.size = 3
+gp.type.a.size = 5
 
 gp.type.a.0.name = direction
 gp.type.a.1.name = int
 gp.type.a.2.name = bool
+gp.type.a.3.name = position
+gp.type.a.4.name = type
 
 # Set types
 gp.type.s.size = 0
@@ -36,7 +38,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 4
+gp.nc.size = 8
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -63,11 +65,34 @@ gp.nc.3.child.0 = bool
 gp.nc.3.child.1 = direction
 gp.nc.3.child.2 = direction
 
+gp.nc.4 = ec.gp.GPNodeConstraints
+gp.nc.4.name = positionToInt
+gp.nc.4.returns int
+gp.nc.4.size = 1
+gp.nc.4.child.0 = position
+
+gp.nc.5 = ec.gp.GPNodeConstraints
+gp.nc.5.name = typeAtPosition
+gp.nc.5.returns type
+gp.nc.5.size = 1
+gp.nc.5.child.0 = position
+
+gp.nc.6 = ec.gp.GPNodeConstraints
+gp.nc.6.name = positionToPosition
+gp.nc.6.returns position
+gp.nc.6.size = 1
+gp.nc.6.child.0 = position
+
+gp.nc.7 = ec.gp.GPNodeConstraints
+gp.nc.7.name = singlePosition
+gp.nc.7.returns position
+gp.nc.7.size = 0
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 7
+gp.fs.0.size = 11
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -87,6 +112,17 @@ gp.fs.0.func.5 = gp.IfTrue
 gp.fs.0.func.5.nc = conditionalDirection
 gp.fs.0.func.6 = gp.IfFalse
 gp.fs.0.func.6.nc = conditionalDirection
+
+gp.fs.0.func.7 = gp.DistanceTo
+gp.fs.0.func.7.nc = positionToInt
+
+gp.fs.0.func.8 = gp.TypeAt
+gp.fs.0.func.8.nc = typeAtPosition
+
+gp.fs.0.func.9 = gp.NearestFruitFrom
+gp.fs.0.func.9.nc = positionToPosition
+gp.fs.0.func.10 = gp.NearestFruit
+gp.fs.0.func.10.nc = singlePosition
 
 # Problem
 eval.problem = gp.SnaykuuProblem
