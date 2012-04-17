@@ -70,8 +70,6 @@ public class SnaykuuProblem extends GPProblem
 		{
 			for (int game = 0; game < gamesPerEval; ++game)
 			{
-				System.out.println("starting game.");
-				
 				Metadata metadata = new Metadata(bw, bh, gf, ff, tt, fg);
 				session = new Session(metadata);
 				
@@ -105,7 +103,6 @@ public class SnaykuuProblem extends GPProblem
 				
 				while (!session.hasEnded())
 				{
-					System.out.println("tick");
 					session.tick();
 				}
 				
@@ -116,6 +113,16 @@ public class SnaykuuProblem extends GPProblem
 			((KozaFitness)ind.fitness).setStandardizedFitness(state, 1.0f);
 			
 			ind.evaluated = true;
+			
+			System.out.println("Team evaluated, fitnes: " + 1.0f);
+			GPIndividual individual = (GPIndividual)ind;
+			for (int i = 0; i < individual.trees.length; ++i)
+			{
+				System.out.println("Tree " + (i + 1) + ":");
+				individual.trees[0].printTreeForHumans(state, 0);
+			}
+			System.out.println();
+			
 		}
 	}
 }
