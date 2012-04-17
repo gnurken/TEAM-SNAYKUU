@@ -7,26 +7,21 @@ import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 
-public class IfFalse extends GPNode
+public class Not extends GPNode
 {
 
 	@Override
 	public String toString()
 	{
-		return "IfNot";
+		return "Not";
 	}
 
 	@Override
 	public void eval(EvolutionState state, int thread, GPData input,
 			ADFStack stack, GPIndividual individual, Problem problem)
 	{
-		BoolData data = new BoolData();
-		children[0].eval(state, thread, data, stack, individual, problem);
-		
-		if (!data.bool)
-			children[1].eval(state, thread, input, stack, individual, problem);
-		else
-			children[2].eval(state, thread, input, stack, individual, problem);
+		children[0].eval(state, thread, input, stack, individual, problem);
+		((BoolData)input).bool = ! ((BoolData)input).bool;
 	}
 
 }

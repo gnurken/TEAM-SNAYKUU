@@ -36,7 +36,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 4
+gp.nc.size = 5
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -63,6 +63,12 @@ gp.nc.3.child.0 = bool
 gp.nc.3.child.1 = direction
 gp.nc.3.child.2 = direction
 
+gp.nc.4 = ec.gp.GPNodeConstraints
+gp.nc.4.name = boolToBool
+gp.nc.4.size = 1
+gp.nc.4.returns = bool
+gp.nc.4.child.0 = bool
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
@@ -85,8 +91,9 @@ gp.fs.0.func.4.nc = binaryBoolIntOperator
 
 gp.fs.0.func.5 = gp.IfTrue
 gp.fs.0.func.5.nc = conditionalDirection
-gp.fs.0.func.6 = gp.IfFalse
-gp.fs.0.func.6.nc = conditionalDirection
+
+gp.fs.0.func.6 = gp.Not
+gp.fs.0.func.6.nc = boolToBool
 
 # Problem
 eval.problem = gp.SnaykuuProblem
