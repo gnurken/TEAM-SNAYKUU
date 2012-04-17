@@ -6,7 +6,7 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import gameLogic.Snake;
+import gameLogic.Position;
 
 public class DistanceTo extends GPNode
 {
@@ -24,10 +24,9 @@ public class DistanceTo extends GPNode
 		IntData data = (IntData)input;
 		
 		PositionData posData = new PositionData();
-		Snake s = ((SnaykuuProblem)problem).getActiveSnake();
+		Position pos = ((SnaykuuProblem)problem).getActiveSnake().getHeadPosition();
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
-		data.value = s.getHeadPosition().getDistanceTo(posData.pos);
+		data.value = pos.getDistanceTo(posData.pos);
 	}
-	
 }

@@ -45,5 +45,4 @@ public class NearestFruitFrom extends GPNode
 		}
 		
 	}
-
 }
