@@ -48,7 +48,8 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 9
+gp.nc.size = 10
+
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
 gp.nc.0.returns direction
@@ -103,11 +104,18 @@ gp.nc.8.size = 1
 gp.nc.8.returns = bool
 gp.nc.8.child.0 = bool
 
+gp.nc.9 = ec.gp.GPNodeConstraints
+gp.nc.9.name = binaryBoolOperator
+gp.nc.9.returns = bool
+gp.nc.9.size = 2
+gp.nc.9.child.0 = bool
+gp.nc.9.child.1 = bool
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 11
+gp.fs.0.size = 13
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -139,6 +147,11 @@ gp.fs.0.func.9 = gp.NearestFruitFrom
 gp.fs.0.func.9.nc = positionToPosition
 gp.fs.0.func.10 = gp.NearestFruit
 gp.fs.0.func.10.nc = singlePosition
+
+gp.fs.0.func.11 = gp.And
+gp.fs.0.func.11.nc = binaryBoolOperator
+gp.fs.0.func.12 = gp.Or
+gp.fs.0.func.12.nc = binaryBoolOperator
 
 # Problem
 eval.problem = gp.SnaykuuProblem
