@@ -1,13 +1,7 @@
 package gp;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import bot.Cancer;
-import bot.CarefulBot;
 import bot.FruitEaterBot;
 
 import ec.EvolutionState;
@@ -17,9 +11,7 @@ import ec.gp.GPNode;
 import ec.gp.GPProblem;
 import ec.gp.koza.KozaFitness;
 import ec.util.Parameter;
-import gameLogic.Brain;
 import gameLogic.GameObjectType;
-import gameLogic.GameState;
 import gameLogic.Metadata;
 import gameLogic.Session;
 import gameLogic.Snake;
@@ -29,6 +21,8 @@ public class SnaykuuProblem extends GPProblem
 {
 	
 	public DirectionData input;
+	
+	private Snake activeSnake;
 	
 	static private GameObjectType objectType = new GameObjectType("Snake", true);
 	static private final int gamesPerEval = 10;
@@ -40,6 +34,16 @@ public class SnaykuuProblem extends GPProblem
 	public Session getSession()
 	{
 		return session;
+	}
+	
+	public void setActiveSnake(Snake s)
+	{
+		activeSnake = s;
+	}
+	
+	public Snake getActiveSnake()
+	{
+		return activeSnake;
 	}
 	
 	public Object clone()

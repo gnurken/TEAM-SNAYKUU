@@ -34,6 +34,8 @@ public class GPBrain implements Brain
 	@Override
 	public Direction getNextMove(Snake yourSnake, GameState gameState)
 	{
+		((SnaykuuProblem)problem).setActiveSnake(yourSnake);
+		
 		root.eval(state, thread, input, stack, individual, problem);
 		
 		return input.dir;
