@@ -2,8 +2,8 @@ package gp;
 
 import java.awt.Color;
 import java.util.List;
-import bot.FruitEaterBot;
 
+import bot.FruitEaterBot;
 import ec.EvolutionState;
 import ec.Individual;
 import ec.gp.GPIndividual;
@@ -68,6 +68,9 @@ public class SnaykuuProblem extends GPProblem
 	{
 		if (!ind.evaluated)
 		{
+			int contestantLifetime = 0;
+			int opponentLifetime = 0;
+			
 			for (int game = 0; game < gamesPerEval; ++game)
 			{
 				Metadata metadata = new Metadata(bw, bh, gf, ff, tt, fg);
@@ -107,22 +110,37 @@ public class SnaykuuProblem extends GPProblem
 				}
 				
 				List<Team> result = session.getGameResult().getTeams();
+				
+				if (result.get(0).getNumber() == 1)
+				{
+					contestantLifetime += result.get(0).getLifespan();
+					opponentLifetime += result.get(1).getLifespan();
+				}
+				else
+				{
+					contestantLifetime += result.get(1).getLifespan();
+					opponentLifetime += result.get(0).getLifespan();
+				}
+				
+				
 			}
 			
-			// TODO: evaluate fitness
-			((KozaFitness)ind.fitness).setStandardizedFitness(state, 1.0f);
+			// TODO: evaluate fitness better
+			
+			float fitness = (float)contestantLifetime / opponentLifetime;
+			((KozaFitness)ind.fitness).setStandardizedFitness(state, fitness);
 			
 			ind.evaluated = true;
 			
-			System.out.println("Team evaluated, fitnes: " + 1.0f);
+			System.out.println("Generation " + state.generation + ".");
+			System.out.println("Team evaluated, fitnes: " + fitness);
 			GPIndividual individual = (GPIndividual)ind;
 			for (int i = 0; i < individual.trees.length; ++i)
 			{
 				System.out.println("Tree " + (i + 1) + ":");
-				individual.trees[0].printTreeForHumans(state, 0);
+				individual.trees[i].printTreeForHumans(state, 0);
 			}
 			System.out.println();
-			
 		}
 	}
 }
