@@ -2,6 +2,9 @@
 
 parent.0 = koza.params
 
+# Population size
+pop.subpop.0.size =	10
+
 # Number of trees per individual
 pop.subpop.0.species.ind.numtrees = 2
 pop.subpop.0.species.ind.tree.0 = ec.gp.GPTree
@@ -10,18 +13,22 @@ pop.subpop.0.species.ind.tree.1 = ec.gp.GPTree
 pop.subpop.0.species.ind.tree.1.tc = tc0
 
 # Number of generations
-generations = 100
+generations = 1
 
 # Types
 # Atomic types
-gp.type.a.size = 1
+gp.type.a.size = 3
+
 gp.type.a.0.name = direction
+gp.type.a.1.name = int
+gp.type.a.2.name = bool
 
 # Set types
 gp.type.s.size = 0
 
 # GPTreeConstraints
 gp.tc.size = 1
+
 gp.tc.0 = ec.gp.GPTreeConstraints
 gp.tc.0.name = tc0
 gp.tc.0.fset = f0
@@ -29,22 +36,57 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 1
+gp.nc.size = 4
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
 gp.nc.0.returns direction
 gp.nc.0.size = 0
 
+gp.nc.1 = ec.gp.GPNodeConstraints
+gp.nc.1.name = singleInt
+gp.nc.1.returns int
+gp.nc.1.size = 0
+
+gp.nc.2 = ec.gp.GPNodeConstraints
+gp.nc.2.name = binaryBoolIntOperator
+gp.nc.2.returns bool
+gp.nc.2.size = 2
+gp.nc.2.child.0 = int
+gp.nc.2.child.1 = int
+
+gp.nc.3 = ec.gp.GPNodeConstraints
+gp.nc.3.name = conditionalDirection
+gp.nc.3.returns direction
+gp.nc.3.size = 3
+gp.nc.3.child.0 = bool
+gp.nc.3.child.1 = direction
+gp.nc.3.child.2 = direction
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
+gp.fs.0.size = 7
 
 # Functions 
-gp.fs.0.size = 1
 gp.fs.0.func.0 = gp.DirectionNode
 gp.fs.0.func.0.nc = singleDirection
+
+gp.fs.0.func.1 = gp.RoundsUntilGrowth
+gp.fs.0.func.1.nc = singleInt
+
+gp.fs.0.func.2 = gp.LessThan
+gp.fs.0.func.2.nc = binaryBoolIntOperator
+gp.fs.0.func.3 = gp.GreaterThan
+gp.fs.0.func.3.nc = binaryBoolIntOperator
+gp.fs.0.func.4 = gp.EqualTo
+gp.fs.0.func.4.nc = binaryBoolIntOperator
+
+gp.fs.0.func.5 = gp.IfTrue
+gp.fs.0.func.5.nc = conditionalDirection
+gp.fs.0.func.6 = gp.IfFalse
+gp.fs.0.func.6.nc = conditionalDirection
 
 # Problem
 eval.problem = gp.SnaykuuProblem
