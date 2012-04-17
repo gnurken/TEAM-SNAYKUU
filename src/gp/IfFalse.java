@@ -13,7 +13,7 @@ public class IfFalse extends GPNode
 	@Override
 	public String toString()
 	{
-		return "If";
+		return "IfNot";
 	}
 
 	@Override
