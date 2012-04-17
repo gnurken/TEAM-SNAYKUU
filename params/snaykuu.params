@@ -2,6 +2,16 @@
 
 parent.0 = koza.params
 
+# Number of thread
+evalthreads = 4
+breedthreads = 4
+
+# Random seeds
+seed.0 = 0
+seed.1 = 1
+seed.2 = 2
+seed.3 = 3
+
 # Population size
 pop.subpop.0.size =	10
 
@@ -13,7 +23,7 @@ pop.subpop.0.species.ind.tree.1 = ec.gp.GPTree
 pop.subpop.0.species.ind.tree.1.tc = tc0
 
 # Number of generations
-generations = 1
+generations = 10
 
 # Types
 # Atomic types
