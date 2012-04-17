@@ -14,7 +14,7 @@ public class TypeData extends GPData
 
 	public enum TileType
 	{
-		FRUIT, WALL, EMPTY, HEAD, BODY, TAIL;
+		FRUIT, WALL, EMPTY, HEAD, BODY, TAIL, DEADSNAKE;
 	}
 	
 }

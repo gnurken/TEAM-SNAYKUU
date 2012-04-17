@@ -6,7 +6,6 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
-import gameLogic.Session;
 import gameLogic.Snake;
 
 public class DistanceTo extends GPNode
