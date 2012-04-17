@@ -19,6 +19,7 @@ import ec.gp.koza.KozaFitness;
 import ec.util.Parameter;
 import gameLogic.Brain;
 import gameLogic.GameObjectType;
+import gameLogic.GameState;
 import gameLogic.Metadata;
 import gameLogic.Session;
 import gameLogic.Snake;
@@ -34,6 +35,13 @@ public class SnaykuuProblem extends GPProblem
 	
 	static private int bw = 30, bh = 30, gf = 5, ff = 10, tt = 1000, fg = 10;
 	
+	private Session session = null;
+	
+	public Session getSession()
+	{
+		return session;
+	}
+	
 	public Object clone()
 	{
 		SnaykuuProblem newProblem = (SnaykuuProblem)super.clone();
@@ -48,7 +56,6 @@ public class SnaykuuProblem extends GPProblem
 		input = (DirectionData) state.parameters.getInstanceForParameterEq(
 								base.push(P_DATA), null, DirectionData.class);
 		input.setup(state, base.push(P_DATA));
-		
 	}
 
 	@Override
@@ -62,7 +69,7 @@ public class SnaykuuProblem extends GPProblem
 				System.out.println("starting game.");
 				
 				Metadata metadata = new Metadata(bw, bh, gf, ff, tt, fg);
-				Session session = new Session(metadata);
+				session = new Session(metadata);
 				
 				Team contestants = new Team("Contestants", 1);
 				session.addTeam(contestants);
