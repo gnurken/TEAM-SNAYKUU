@@ -27,5 +27,4 @@ public class IfFriendly extends GPNode
 		
 		data.bool = ((SnaykuuProblem)problem).getActiveTeam().contains(snakeData.snake);
 	}
-	
 }
