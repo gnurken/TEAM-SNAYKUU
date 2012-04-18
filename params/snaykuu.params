@@ -49,7 +49,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 19
+gp.nc.size = 20
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -168,11 +168,16 @@ gp.nc.18.size = 2
 gp.nc.18.child.0 = direction
 gp.nc.18.child.1 = direction
 
+gp.nc.19 = ec.gp.GPNodeConstraints
+gp.nc.19.name = singleBool
+gp.nc.19.returns = bool
+gp.nc.19.size = 0
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 26
+gp.fs.0.size = 32
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -243,6 +248,19 @@ gp.fs.0.func.24.nc = binaryBoolTypeOperator
 
 gp.fs.0.func.25 = gp.DirectionEqualTo
 gp.fs.0.func.25.nc = binaryBoolDirectionOperator
+
+gp.fs.0.func.26 = gp.DangerAhead
+gp.fs.0.func.26.nc = singleBool
+gp.fs.0.func.27 = gp.DangerLeft
+gp.fs.0.func.27.nc = singleBool
+gp.fs.0.func.28 = gp.DangerRight
+gp.fs.0.func.28.nc = singleBool
+gp.fs.0.func.29 = gp.FoodAhead
+gp.fs.0.func.29.nc = singleBool
+gp.fs.0.func.30 = gp.FoodLeft
+gp.fs.0.func.30.nc = singleBool
+gp.fs.0.func.31 = gp.FoodRight
+gp.fs.0.func.31.nc = singleBool
 
 # Problem
 eval.problem = gp.SnaykuuProblem
