@@ -17,7 +17,7 @@ public class NearestSnakeHead extends GPNode
 
 	@Override
 	public String toString() {
-		return "ClosestSnake";
+		return "NearestSnakeHead";
 	}
 
 	@Override
