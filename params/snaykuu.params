@@ -1,4 +1,4 @@
-# Copyright 2012 Thomas Zebühr and Daniel Malmqvist
+﻿# Copyright 2012 Thomas Zebühr and Daniel Malmqvist
 
 parent.0 = koza.params
 
@@ -49,7 +49,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 14
+gp.nc.size = 17
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -136,11 +136,29 @@ gp.nc.13.size = 1
 gp.nc.13.returns = bool
 gp.nc.13.child.0 = snake
 
+gp.nc.14 = ec.gp.GPNodeConstraints
+gp.nc.14.name = directionToDirection
+gp.nc.14.size = 1
+gp.nc.14.returns = direction
+gp.nc.14.child.0 = direction
+
+gp.nc.15 = ec.gp.GPNodeConstraints
+gp.nc.15.name = singleType
+gp.nc.15.size = 0
+gp.nc.15.returns = type
+
+gp.nc.16 = ec.gp.GPNodeConstraints
+gp.nc.16.name = directionAndPositionToPosition
+gp.nc.16.size = 2
+gp.nc.16.returns = position
+gp.nc.16.child.0 = direction
+gp.nc.16.child.1 = position
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 20
+gp.fs.0.size = 24
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -194,6 +212,17 @@ gp.fs.0.func.18.nc = positionToSnake
 
 gp.fs.0.func.19 = gp.IfFriendly
 gp.fs.0.func.19.nc = snakeToBool
+
+gp.fs.0.func.20 = gp.LeftOf
+gp.fs.0.func.20.nc = directionToDirection
+gp.fs.0.func.21 = gp.RightOf
+gp.fs.0.func.21.nc = directionToDirection
+
+gp.fs.0.func.22 = gp.TypeNode
+gp.fs.0.func.22.nc = singleType
+
+gp.fs.0.func.23 = gp.InDirectionFrom
+gp.fs.0.func.23.nc = directionAndPositionToPosition
 
 # Problem
 eval.problem = gp.SnaykuuProblem
