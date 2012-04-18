@@ -49,7 +49,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 17
+gp.nc.size = 19
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -154,11 +154,25 @@ gp.nc.16.returns = position
 gp.nc.16.child.0 = direction
 gp.nc.16.child.1 = position
 
+gp.nc.17 = ec.gp.GPNodeConstraints
+gp.nc.17.name = binaryBoolTypeOperator
+gp.nc.17.returns = bool
+gp.nc.17.size = 2
+gp.nc.17.child.0 = type
+gp.nc.17.child.1 = type
+
+gp.nc.18 = ec.gp.GPNodeConstraints
+gp.nc.18.name = binaryBoolDirectionOperator
+gp.nc.18.returns = bool
+gp.nc.18.size = 2
+gp.nc.18.child.0 = direction
+gp.nc.18.child.1 = direction
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 24
+gp.fs.0.size = 26
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -171,7 +185,7 @@ gp.fs.0.func.2 = gp.LessThan
 gp.fs.0.func.2.nc = binaryBoolIntOperator
 gp.fs.0.func.3 = gp.GreaterThan
 gp.fs.0.func.3.nc = binaryBoolIntOperator
-gp.fs.0.func.4 = gp.EqualTo
+gp.fs.0.func.4 = gp.IntEqualTo
 gp.fs.0.func.4.nc = binaryBoolIntOperator
 
 gp.fs.0.func.5 = gp.IfTrue
@@ -223,6 +237,12 @@ gp.fs.0.func.22.nc = singleType
 
 gp.fs.0.func.23 = gp.InDirectionFrom
 gp.fs.0.func.23.nc = directionAndPositionToPosition
+
+gp.fs.0.func.24 = gp.TypeEqualTo
+gp.fs.0.func.24.nc = binaryBoolTypeOperator
+
+gp.fs.0.func.25 = gp.DirectionEqualTo
+gp.fs.0.func.25.nc = binaryBoolDirectionOperator
 
 # Problem
 eval.problem = gp.SnaykuuProblem

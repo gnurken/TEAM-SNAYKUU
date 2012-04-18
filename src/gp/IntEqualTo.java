@@ -7,7 +7,7 @@ import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 
-public class EqualTo extends GPNode
+public class IntEqualTo extends GPNode
 {
 
 	@Override
