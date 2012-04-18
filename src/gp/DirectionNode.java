@@ -14,6 +14,13 @@ public class DirectionNode extends ERC
 	@Override
 	public String toString() 
 	{
+		if (direction != null)
+		{
+			String str = direction.toString();
+			str = str.charAt(0) + str.substring(1).toLowerCase();
+			return str;
+		}
+		
 		return "direction";
 	}
 
@@ -41,23 +48,9 @@ public class DirectionNode extends ERC
 	@Override
 	public void resetNode(EvolutionState state, int thread)
 	{
-		int n = state.random[thread].nextInt(4);
+		int n = state.random[thread].nextInt(Direction.values().length);
 		
-		switch (n)
-		{
-		case 0:
-			direction = Direction.EAST;
-			break;
-		case 1:
-			direction = Direction.WEST;
-			break;
-		case 2:
-			direction = Direction.EAST;
-			break;
-		case 3:
-			direction = Direction.NORTH;
-			break;
-		}
+		direction = Direction.values()[n];
 	}
 
 	@Override
