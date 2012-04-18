@@ -49,7 +49,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 13
+gp.nc.size = 14
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -130,11 +130,17 @@ gp.nc.12.size = 1
 gp.nc.12.returns = snake
 gp.nc.12.child.0 = position
 
+gp.nc.13 = ec.gp.GPNodeConstraints
+gp.nc.13.name = snakeToBool
+gp.nc.13.size = 1
+gp.nc.13.returns = bool
+gp.nc.13.child.0 = snake
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 19
+gp.fs.0.size = 20
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -185,6 +191,9 @@ gp.fs.0.func.17.nc = snakeToPosition
 
 gp.fs.0.func.18 = gp.NearestSnakeHead
 gp.fs.0.func.18.nc = positionToSnake
+
+gp.fs.0.func.19 = gp.IfFriendly
+gp.fs.0.func.19.nc = snakeToBool
 
 # Problem
 eval.problem = gp.SnaykuuProblem
