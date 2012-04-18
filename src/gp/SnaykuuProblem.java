@@ -19,6 +19,7 @@ import gameLogic.Team;
 
 public class SnaykuuProblem extends GPProblem
 {
+	private boolean graphical = false;
 	
 	public DirectionData input;
 	
@@ -28,7 +29,7 @@ public class SnaykuuProblem extends GPProblem
 	static private GameObjectType objectType = new GameObjectType("Snake", true);
 	static private final int gamesPerEval = 10;
 	
-	static private int bw = 30, bh = 30, gf = 5, ff = 10, tt = 1000, fg = 10;
+	static private int bw = 30, bh = 30, gf = 5, ff = 10, tt = 300, fg = 10;
 	
 	private Session session = null;
 	
@@ -111,10 +112,15 @@ public class SnaykuuProblem extends GPProblem
 				
 				session.prepareForStart();
 				
-				while (!session.hasEnded())
+				if(graphical)
+					gameMain.Main.runGame(session, tt, 25);
+				else
 				{
-					session.tick();
-				}
+					while (!session.hasEnded())
+					{
+						session.tick();
+					}
+				}				
 				
 				List<Team> result = session.getGameResult().getTeams();
 				
