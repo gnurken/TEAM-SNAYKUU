@@ -23,6 +23,7 @@ public class SnaykuuProblem extends GPProblem
 	public DirectionData input;
 	
 	private Snake activeSnake;
+	private Team activeTeam;
 	
 	static private GameObjectType objectType = new GameObjectType("Snake", true);
 	static private final int gamesPerEval = 10;
@@ -44,6 +45,11 @@ public class SnaykuuProblem extends GPProblem
 	public Snake getActiveSnake()
 	{
 		return activeSnake;
+	}
+	
+	public Team getActiveTeam()
+	{
+		return activeTeam;
 	}
 	
 	public Object clone()
@@ -78,6 +84,7 @@ public class SnaykuuProblem extends GPProblem
 				
 				Team contestants = new Team("Contestants", 1);
 				session.addTeam(contestants);
+				activeTeam = contestants;
 				
 				GPIndividual individual = (GPIndividual)ind;
 				int snakesPerTeam = individual.trees.length;
