@@ -127,7 +127,7 @@ public class SnaykuuProblem extends GPProblem
 			
 			// TODO: evaluate fitness better
 			
-			float fitness = (float)contestantLifetime / opponentLifetime;
+			float fitness = ((float)opponentLifetime / (float)contestantLifetime);
 			((KozaFitness)ind.fitness).setStandardizedFitness(state, fitness);
 			
 			ind.evaluated = true;
