@@ -27,7 +27,7 @@ public class DistanceToX extends GPNode
 		IntData data = (IntData)input;
 		
 		PositionData posData = new PositionData();
-		Position pos = ((SnaykuuProblem)problem).getActiveSnake().getHeadPosition();
+		Position pos = ((SnaykuuProblem)problem).getActiveSnake(thread).getHeadPosition();
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
 		

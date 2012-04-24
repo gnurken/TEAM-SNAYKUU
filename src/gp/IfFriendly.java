@@ -6,6 +6,7 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
+import gameLogic.Snake;
 
 public class IfFriendly extends GPNode
 {
@@ -25,6 +26,7 @@ public class IfFriendly extends GPNode
 		
 		children[0].eval(state, thread, snakeData, stack, individual, problem);
 		
-		data.bool = ((SnaykuuProblem)problem).getActiveTeam().contains(snakeData.snake);
+		Snake snake = ((SnaykuuProblem)problem).getSnakeById(thread, snakeData.snakeId);
+		data.bool = ((SnaykuuProblem)problem).getActiveTeam(thread).contains(snake);
 	}
 }

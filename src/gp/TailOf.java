@@ -6,6 +6,7 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
+import gameLogic.Snake;
 
 public class TailOf extends GPNode
 {
@@ -24,6 +25,7 @@ public class TailOf extends GPNode
 		SnakeData snakeData = new SnakeData();
 		
 		children[0].eval(state, thread, snakeData, stack, individual, problem);
-		data.pos = snakeData.snake.getTailPosition();
+		Snake snake = ((SnaykuuProblem)problem).getSnakeById(thread, snakeData.snakeId);
+		data.pos = snake.getTailPosition();
 	}
 }

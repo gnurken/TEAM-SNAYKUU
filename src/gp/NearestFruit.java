@@ -25,8 +25,8 @@ public class NearestFruit extends GPNode
 	{
 		PositionData data = (PositionData)input;
 		
-		List<Position> fruits = ((SnaykuuProblem)problem).getSession().getCurrentState().getFruits();
-		Position headPos = ((SnaykuuProblem)problem).getActiveSnake().getHeadPosition();
+		List<Position> fruits = ((SnaykuuProblem)problem).getSession(thread).getCurrentState().getFruits();
+		Position headPos = ((SnaykuuProblem)problem).getActiveSnake(thread).getHeadPosition();
 		int currentDistance = Integer.MAX_VALUE;
 		
 		if(fruits.isEmpty())

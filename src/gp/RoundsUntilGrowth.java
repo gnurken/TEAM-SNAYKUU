@@ -22,7 +22,7 @@ public class RoundsUntilGrowth extends GPNode
 			ADFStack stack, GPIndividual individual, Problem problem)
 	{
 		IntData data = (IntData)input;
-		Session session = ((SnaykuuProblem)problem).getSession();
+		Session session = ((SnaykuuProblem)problem).getSession(thread);
 		data.value = session.getGameResult().getRecordedGame().getTurnCount() % session.getMetadata().getFruitFrequency();
 	}
 

@@ -28,7 +28,7 @@ public class TypeAt extends GPNode
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
 		
-		Square square = ((SnaykuuProblem)problem).getSession().getBoard().getSquare(posData.pos);
+		Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(posData.pos);
 		
 		if(square.isEmpty())
 			data.type = TypeData.TileType.EMPTY;

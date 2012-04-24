@@ -27,7 +27,7 @@ public class FoodIn extends GPNode
 		DirectionData direction = new DirectionData();
 		children[0].eval(state, thread, direction, stack, individual, problem);
 		
-		Position pos = ((SnaykuuProblem)problem).getActiveSnake().getHeadPosition();
+		Position pos = ((SnaykuuProblem)problem).getActiveSnake(thread).getHeadPosition();
 		
 		int i = 0;
 		
@@ -35,7 +35,7 @@ public class FoodIn extends GPNode
 		{
 			pos = direction.dir.calculateNextPosition(pos);
 			
-			Square square = ((SnaykuuProblem)problem).getSession().getBoard().getSquare(pos);
+			Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(pos);
 			
 			if(square.hasFruit())
 			{

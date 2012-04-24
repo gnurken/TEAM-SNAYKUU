@@ -21,11 +21,11 @@ public class DangerRight extends GPNode
 	{
 		BoolData data = (BoolData)input;
 		
-		Snake snake = ((SnaykuuProblem)problem).getActiveSnake();
+		Snake snake = ((SnaykuuProblem)problem).getActiveSnake(thread);
 		
 		Position pos = snake.getCurrentDirection().turnRight().calculateNextPosition(snake.getHeadPosition());
 		
-		Square square = ((SnaykuuProblem)problem).getSession().getBoard().getSquare(pos);
+		Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(pos);
 		
 		data.bool = square.isLethal();
 	}

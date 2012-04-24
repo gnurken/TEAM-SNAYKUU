@@ -32,10 +32,10 @@ public class NearestSnakeHead extends GPNode
 		
 		List<Snake> snakes = new LinkedList<Snake>();
 		
-		for(Snake s : ((SnaykuuProblem)problem).getSession().getSnakes())
+		for(Snake s : ((SnaykuuProblem)problem).getSession(thread).getSnakes())
 			snakes.add(s);
 		
-		snakes.remove(((SnaykuuProblem)problem).getActiveSnake());
+		snakes.remove(((SnaykuuProblem)problem).getActiveSnake(thread));
 		
 		int currentDistance = Integer.MAX_VALUE;
 		

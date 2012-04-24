@@ -28,7 +28,7 @@ public class NearestFruitFrom extends GPNode
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
 		
-		List<Position> fruits = ((SnaykuuProblem)problem).getSession().getCurrentState().getFruits();
+		List<Position> fruits = ((SnaykuuProblem)problem).getSession(thread).getCurrentState().getFruits();
 		int currentDistance = Integer.MAX_VALUE;
 		
 		if(fruits.isEmpty())

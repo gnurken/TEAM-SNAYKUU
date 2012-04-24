@@ -1,7 +1,9 @@
 package gp;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bot.FruitEaterBot;
 import ec.EvolutionState;
@@ -21,36 +23,54 @@ public class SnaykuuProblem extends GPProblem
 {
 	private boolean graphical = false;
 	
-	public DirectionData input;
-	
-	private Snake activeSnake;
-	private Team activeTeam;
+	public static int nrOfSnakesPerTeam = 2; 
 	
 	static private GameObjectType objectType = new GameObjectType("Snake", true);
 	static private final int gamesPerEval = 10;
 	
 	static private int bw = 30, bh = 30, gf = 5, ff = 10, tt = 300, fg = 10;
 	
-	private Session session = null;
+	private Map<Integer, ThreadData> threadData = new HashMap<Integer, ThreadData>();
 	
-	public Session getSession()
+	private DirectionData input;
+	
+	class ThreadData
 	{
-		return session;
+		private Session session = null;
+		public Snake activeSnake = null;
+		public Team activeTeam = null;
+		
+		public Map<Integer, Snake> snakes = new HashMap<Integer, Snake>();
 	}
 	
-	public void setActiveSnake(Snake s)
+	public Snake getSnakeById(int threadNumber, int snakeId)
 	{
-		activeSnake = s;
+		return threadData.get(threadNumber).snakes.get(snakeId);
 	}
 	
-	public Snake getActiveSnake()
+	public Snake setSnakeById(int threadNumber, int snakeId, Snake snake)
 	{
-		return activeSnake;
+		return threadData.get(threadNumber).snakes.put(snakeId, snake);
 	}
 	
-	public Team getActiveTeam()
+	public Session getSession(int threadNumber)
 	{
-		return activeTeam;
+		return threadData.get(threadNumber).session;
+	}
+	
+	public void setActiveSnake(Snake s, int threadNumber)
+	{
+		threadData.get(threadNumber).activeSnake = s;
+	}
+	
+	public Snake getActiveSnake(int threadNumber)
+	{
+		return threadData.get(threadNumber).activeSnake;
+	}
+	
+	public Team getActiveTeam(int threadNumber)
+	{
+		return threadData.get(threadNumber).activeTeam;
 	}
 	
 	public Object clone()
@@ -67,11 +87,16 @@ public class SnaykuuProblem extends GPProblem
 		input = (DirectionData) state.parameters.getInstanceForParameterEq(
 								base.push(P_DATA), null, DirectionData.class);
 		input.setup(state, base.push(P_DATA));
+		
+		for (int i = 0; i < state.evalthreads; ++i)
+		{
+			threadData.put(i, new ThreadData());
+		}
 	}
 
 	@Override
 	public void evaluate(EvolutionState state, Individual ind,
-						 int subpopulation, int threadnum)
+						 int subpopulation, int threadNumber)
 	{
 		if (!ind.evaluated)
 		{
@@ -81,11 +106,14 @@ public class SnaykuuProblem extends GPProblem
 			for (int game = 0; game < gamesPerEval; ++game)
 			{
 				Metadata metadata = new Metadata(bw, bh, gf, ff, tt, fg);
-				session = new Session(metadata);
+				Session thisSession = new Session(metadata);
+				threadData.get(threadNumber).session = thisSession;
 				
 				Team contestants = new Team("Contestants", 1);
-				session.addTeam(contestants);
-				activeTeam = contestants;
+				threadData.get(threadNumber).session.addTeam(contestants);
+				threadData.get(threadNumber).activeTeam = contestants;
+				
+				int snakeCount = 0;
 				
 				GPIndividual individual = (GPIndividual)ind;
 				int snakesPerTeam = individual.trees.length;
@@ -94,31 +122,34 @@ public class SnaykuuProblem extends GPProblem
 					GPNode root = individual.trees[i].child;
 					
 					GPBrain brain = new GPBrain();
-					brain.setup(root, state, threadnum, stack, individual, this, input);
+					brain.setup(root, state, threadNumber, stack, individual, this, input);
 					
 					Snake snake = new Snake(objectType, "Contestant" + i, brain, Color.BLUE);
-					session.addSnake(snake, contestants);
+					thisSession.addSnake(snake, contestants);
+					
+					setSnakeById(threadNumber, snakeCount++, snake);
 				}
 				
 				// Create Opponent team
 				Team opponents = new Team("Opponents", 2);
-				session.addTeam(opponents);
+				thisSession.addTeam(opponents);
 				
 				for (int i = 0; i < snakesPerTeam; ++i)
 				{
 					Snake snake = new Snake(objectType, "Opponent" + i, new FruitEaterBot(), Color.RED);
-					session.addSnake(snake, opponents);
+					thisSession.addSnake(snake, opponents);
+					setSnakeById(threadNumber, snakeCount++, snake);
 				}
 				
-				session.prepareForStart();
+				thisSession.prepareForStart();
 				
 				if(graphical)
-					gameMain.Main.runGame(session, tt, 25);
+					gameMain.Main.runGame(thisSession, tt, 25);
 				else
 				{
-					while (!session.hasEnded())
+					while (!thisSession.hasEnded())
 					{
-						session.tick();
+						thisSession.tick();
 					}
 				}				
 				
