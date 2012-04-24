@@ -24,7 +24,7 @@ public class NearestSnakeHead extends GPNode
 	public void eval(EvolutionState state, int thread, GPData input,
 			ADFStack stack, GPIndividual individual, Problem problem) 
 	{
-		SnakeData data = (SnakeData)input;
+		PositionData data = (PositionData)input;
 		
 		PositionData posData = new PositionData();
 		
@@ -44,7 +44,7 @@ public class NearestSnakeHead extends GPNode
 			int test = posData.pos.getDistanceTo(snake.getHeadPosition());
 			if(test < currentDistance)
 			{	
-				data.snake = snake;
+				data.pos = snake.getHeadPosition();
 				currentDistance = test;
 			}
 		}
