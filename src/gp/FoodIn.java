@@ -38,8 +38,15 @@ public class FoodIn extends GPNode
 			Square square = ((SnaykuuProblem)problem).getSession().getBoard().getSquare(pos);
 			
 			if(square.hasFruit())
+			{
+				data.value = i;
 				break;
+			}
+			else if(square.hasWall())
+			{
+				data.value = -1;
+				break;
+			}
 		}	
-		data.value = i;
 	}
 }
