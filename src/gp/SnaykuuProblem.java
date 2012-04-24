@@ -122,19 +122,8 @@ public class SnaykuuProblem extends GPProblem
 					}
 				}				
 				
-				List<Team> result = session.getGameResult().getTeams();
-				
-				if (result.get(0).getNumber() == 1)
-				{
-					contestantLifetime += result.get(0).getLifespan();
-					opponentLifetime += result.get(1).getLifespan();
-				}
-				else
-				{
-					contestantLifetime += result.get(1).getLifespan();
-					opponentLifetime += result.get(0).getLifespan();
-				}
-				
+				contestantLifetime += contestants.getLifespan();
+				opponentLifetime += opponents.getLifespan();
 				
 			}
 			
