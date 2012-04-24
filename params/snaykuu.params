@@ -1,4 +1,4 @@
-﻿# Copyright 2012 Thomas Zebühr and Daniel Malmqvist
+# Copyright 2012 Thomas Zeb�hr and Daniel Malmqvist
 
 parent.0 = koza.params
 
@@ -49,7 +49,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 21
+gp.nc.size = 22
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -179,11 +179,17 @@ gp.nc.20.size = 1
 gp.nc.20.returns = direction
 gp.nc.20.child.0 = snake
 
+gp.nc.21 = ec.gp.GPNodeConstraints
+gp.nc.21.name = directionToInt
+gp.nc.21.size = 1
+gp.nc.21.returns = int
+gp.nc.21.child.0 = direction
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
-gp.fs.0.size = 33
+gp.fs.0.size = 29
 
 # Functions 
 gp.fs.0.func.0 = gp.DirectionNode
@@ -233,7 +239,7 @@ gp.fs.0.func.17 = gp.TailOf
 gp.fs.0.func.17.nc = snakeToPosition
 
 gp.fs.0.func.18 = gp.NearestSnakeHead
-gp.fs.0.func.18.nc = positionToSnake
+gp.fs.0.func.18.nc = positionToPosition
 
 gp.fs.0.func.19 = gp.IfFriendly
 gp.fs.0.func.19.nc = snakeToBool
@@ -255,21 +261,13 @@ gp.fs.0.func.24.nc = binaryBoolTypeOperator
 gp.fs.0.func.25 = gp.DirectionEqualTo
 gp.fs.0.func.25.nc = binaryBoolDirectionOperator
 
-gp.fs.0.func.26 = gp.DangerAhead
-gp.fs.0.func.26.nc = singleBool
-gp.fs.0.func.27 = gp.DangerLeft
-gp.fs.0.func.27.nc = singleBool
-gp.fs.0.func.28 = gp.DangerRight
-gp.fs.0.func.28.nc = singleBool
-gp.fs.0.func.29 = gp.FoodAhead
-gp.fs.0.func.29.nc = singleBool
-gp.fs.0.func.30 = gp.FoodLeft
-gp.fs.0.func.30.nc = singleBool
-gp.fs.0.func.31 = gp.FoodRight
-gp.fs.0.func.31.nc = singleBool
+gp.fs.0.func.26 = gp.DangerIn
+gp.fs.0.func.26.nc = directionToInt
+gp.fs.0.func.27 = gp.FoodIn
+gp.fs.0.func.27.nc = directionToInt
 
-gp.fs.0.func.32 = gp.DirectionOf
-gp.fs.0.func.32.nc = snakeToDirection
+gp.fs.0.func.28 = gp.DirectionOf
+gp.fs.0.func.28.nc = snakeToDirection
 
 # Problem
 eval.problem = gp.SnaykuuProblem
