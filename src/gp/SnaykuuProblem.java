@@ -34,6 +34,12 @@ public class SnaykuuProblem extends GPProblem
 	
 	private DirectionData input;
 	
+	// Fitness constants
+	final float C1 = fg;
+	final float C2 = 0.2f;
+	
+	final float maxTime = 300.0f;
+	
 	class ThreadData
 	{
 		private Session session = null;
@@ -155,18 +161,21 @@ public class SnaykuuProblem extends GPProblem
 				int time = thisSession.getGameTime();
 				int score = contestants.getScore();
 				
-				int winSign = 1;
-				int maxTime = 300;
+				int winSign = 0;
 				
-				float C1 = 5.0f;
-				float C2 = 0.2f;
+				int comparedLifespan = contestants.getLifespan() - opponents.getLifespan();
+				int comparedScore = contestants.getScore() - opponents.getScore();
+				if (comparedLifespan != 0)
+					winSign = comparedLifespan / Math.abs(comparedLifespan);
+				else if (comparedScore != 0)
+					winSign = comparedScore / Math.abs(comparedScore);
 				
-				fitness[game] = C1 + C2 * (time / (float)maxTime) * winSign + (score / (float)fg); 
+				fitness[game] = C1 + C2 * ((maxTime - time) / maxTime) * winSign + (score / (float)fg); 
 			}
 			
 			// TODO: evaluate fitness better
 			
-			float maxRawFitness = 5.0f + 0.2f + 1.0f;
+			float maxRawFitness = C1 + C2 + 1.0f;
 			
 			float rawFitnessSum = 0.0f;
 			for (float f : fitness)
