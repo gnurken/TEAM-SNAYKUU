@@ -25,6 +25,8 @@ public class Session implements Game
 	
 	private RecordedGame recordedGame = null;
 	
+	private int gameTime;
+	
 	public Session(Metadata metadata)
 	{
 		this.metadata = metadata;
@@ -42,6 +44,11 @@ public class Session implements Game
 	public Metadata getMetadata()
 	{
 		return metadata;
+	}
+	
+	public int getGameTime()
+	{
+		return gameTime;
 	}
 	
 	public void addTeam(Team newTeam)
@@ -91,6 +98,8 @@ public class Session implements Game
 		placeSnakesOnBoard();
 		
 		recordedGame = new RecordedGame(metadata, board, teams);
+		
+		gameTime = 0;
 	}
 	
 	/**
@@ -146,6 +155,8 @@ public class Session implements Game
 		
 		Frame frame = new Frame(board, teams);
 		recordedGame.addFrame(frame);
+		
+		++gameTime;
 	}
 	
 	public void cleanup()
