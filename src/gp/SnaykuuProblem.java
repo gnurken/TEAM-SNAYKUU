@@ -100,8 +100,7 @@ public class SnaykuuProblem extends GPProblem
 	{
 		if (!ind.evaluated)
 		{
-			int contestantLifetime = 0;
-			int opponentLifetime = 0;
+			float[] fitness = new float[gamesPerEval];
 			
 			for (int game = 0; game < gamesPerEval; ++game)
 			{
@@ -153,20 +152,34 @@ public class SnaykuuProblem extends GPProblem
 					}
 				}				
 				
-				contestantLifetime += contestants.getLifespan();
-				opponentLifetime += opponents.getLifespan();
+				int time = thisSession.getGameTime();
+				int score = contestants.getScore();
 				
+				int winSign = 1;
+				int maxTime = 300;
+				
+				float C1 = 5.0f;
+				float C2 = 0.2f;
+				
+				fitness[game] = C1 + C2 * (time / (float)maxTime) * winSign + (score / (float)fg); 
 			}
 			
 			// TODO: evaluate fitness better
 			
-			float fitness = ((float)opponentLifetime / (float)contestantLifetime);
-			((KozaFitness)ind.fitness).setStandardizedFitness(state, fitness);
+			float maxRawFitness = 5.0f + 0.2f + 1.0f;
+			
+			float rawFitnessSum = 0.0f;
+			for (float f : fitness)
+				rawFitnessSum += f;
+			
+			float rawFitness = rawFitnessSum / gamesPerEval;
+			float standardizedFitness = maxRawFitness - rawFitness;
+			((KozaFitness)ind.fitness).setStandardizedFitness(state, standardizedFitness);
 			
 			ind.evaluated = true;
 			
 			System.out.println("Generation " + state.generation + ".");
-			System.out.println("Team evaluated, fitnes: " + fitness);
+			System.out.println("Team evaluated, fitnes: " + rawFitness);
 			GPIndividual individual = (GPIndividual)ind;
 			for (int i = 0; i < individual.trees.length; ++i)
 			{
