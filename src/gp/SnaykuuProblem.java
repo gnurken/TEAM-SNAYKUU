@@ -38,7 +38,7 @@ public class SnaykuuProblem extends GPProblem
 	final float C1 = fruitGoal;
 	final float C2 = 0.2f;
 	
-	final float maxTime = (boardWidth * boardHeight) / (1 / (growthFrequency * 2));
+	final float maxTime = (boardWidth * boardHeight) / (1.0f / (growthFrequency * 2.0f));
 	
 	class ThreadData
 	{
@@ -170,12 +170,19 @@ public class SnaykuuProblem extends GPProblem
 				else if (comparedScore != 0)
 					winSign = comparedScore / Math.abs(comparedScore);
 				
-				fitness[game] = C1 + C2 * ((maxTime - time) / maxTime) * winSign + (score / (float)fruitGoal);
+				float timeFitness = 0.0f;
+				if (winSign > 0)
+					timeFitness = (maxTime - time) / maxTime;
+				else
+					timeFitness = time / maxTime;
+					
+				float timeFitnessScaling = 0.2f;
+				fitness[game] = timeFitness * timeFitnessScaling + (score / (float)fruitGoal);
 			}
 			
 			// TODO: evaluate fitness better
 			
-			float maxRawFitness = C1 + C2 + 1.0f;
+			float maxRawFitness = 1.0f + 1.0f;
 			
 			float rawFitnessSum = 0.0f;
 			for (float f : fitness)
