@@ -28,14 +28,14 @@ public class SnaykuuProblem extends GPProblem
 	static private GameObjectType objectType = new GameObjectType("Snake", true);
 	static private final int gamesPerEval = 10;
 	
-	static private int bw = 30, bh = 30, gf = 5, ff = 10, tt = 300, fg = 10;
+	static private int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 300, fruitGoal = 10;
 	
 	private Map<Integer, ThreadData> threadData = new HashMap<Integer, ThreadData>();
 	
 	private DirectionData input;
 	
 	// Fitness constants
-	final float C1 = fg;
+	final float C1 = fruitGoal;
 	final float C2 = 0.2f;
 	
 	final float maxTime = 300.0f;
@@ -110,7 +110,7 @@ public class SnaykuuProblem extends GPProblem
 			
 			for (int game = 0; game < gamesPerEval; ++game)
 			{
-				Metadata metadata = new Metadata(bw, bh, gf, ff, tt, fg);
+				Metadata metadata = new Metadata(boardWidth, boardHeight, growthFrequency, fruitFrequency, thinkingTime, fruitGoal);
 				Session thisSession = new Session(metadata);
 				threadData.get(threadNumber).session = thisSession;
 				
@@ -149,7 +149,7 @@ public class SnaykuuProblem extends GPProblem
 				thisSession.prepareForStart();
 				
 				if(graphical)
-					gameMain.Main.runGame(thisSession, tt, 25);
+					gameMain.Main.runGame(thisSession, thinkingTime, 25);
 				else
 				{
 					while (!thisSession.hasEnded())
@@ -170,7 +170,7 @@ public class SnaykuuProblem extends GPProblem
 				else if (comparedScore != 0)
 					winSign = comparedScore / Math.abs(comparedScore);
 				
-				fitness[game] = C1 + C2 * ((maxTime - time) / maxTime) * winSign + (score / (float)fg); 
+				fitness[game] = C1 + C2 * ((maxTime - time) / maxTime) * winSign + (score / (float)fruitGoal); 
 			}
 			
 			// TODO: evaluate fitness better
