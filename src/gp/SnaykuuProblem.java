@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bot.CarefulBot;
 import bot.FruitEaterBot;
 import ec.EvolutionState;
 import ec.Individual;
@@ -35,8 +36,7 @@ public class SnaykuuProblem extends GPProblem
 	private DirectionData input;
 	
 	// Fitness constants
-	final float C1 = fruitGoal;
-	final float C2 = 0.2f;
+	float timeFitnessScaling = 0.2f;
 	
 	final float maxTime = (boardWidth * boardHeight) / (1.0f / (growthFrequency * 2.0f));
 	
@@ -176,13 +176,12 @@ public class SnaykuuProblem extends GPProblem
 				else
 					timeFitness = time / maxTime;
 					
-				float timeFitnessScaling = 0.2f;
 				fitness[game] = timeFitness * timeFitnessScaling + (score / (float)fruitGoal);
 			}
 			
 			// TODO: evaluate fitness better
 			
-			float maxRawFitness = 1.0f + 1.0f;
+			float maxRawFitness = timeFitnessScaling + 1.0f;
 			
 			float rawFitnessSum = 0.0f;
 			for (float f : fitness)
