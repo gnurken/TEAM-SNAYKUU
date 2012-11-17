@@ -141,7 +141,7 @@ public class SnaykuuProblem extends GPProblem
 				
 				for (int i = 0; i < snakesPerTeam; ++i)
 				{
-					Snake snake = new Snake(objectType, "Opponent" + i, new FruitEaterBot(), Color.RED);
+					Snake snake = new Snake(objectType, "Opponent" + i, new CarefulBot(), Color.RED);
 					thisSession.addSnake(snake, opponents);
 					setSnakeById(threadNumber, snakeCount++, snake);
 				}
