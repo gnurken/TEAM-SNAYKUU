@@ -2,7 +2,6 @@ package gp;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import bot.CarefulBot;
@@ -16,6 +15,7 @@ import ec.gp.koza.KozaFitness;
 import ec.util.Parameter;
 import gameLogic.GameObjectType;
 import gameLogic.Metadata;
+import gameLogic.Position;
 import gameLogic.Session;
 import gameLogic.Snake;
 import gameLogic.Team;
@@ -23,6 +23,7 @@ import gameLogic.Team;
 public class SnaykuuProblem extends GPProblem
 {
 	private boolean graphical = false;
+	private int vision = 10;
 	
 	public static int nrOfSnakesPerTeam = 2; 
 	
@@ -77,6 +78,24 @@ public class SnaykuuProblem extends GPProblem
 	public Team getActiveTeam(int threadNumber)
 	{
 		return threadData.get(threadNumber).activeTeam;
+	}
+	
+	public boolean hasVision(Team team, Position position)
+	{
+		boolean hasVision = false;
+		
+		for (Snake snake : team.getSnakes())
+		{
+			Position snakePosition = snake.getHeadPosition();
+			
+			int dX = Math.abs(snakePosition.getX() - position.getX());
+			int dY = Math.abs(snakePosition.getY() - position.getY());
+			
+			if ((dX <= vision) && (dY <= vision))
+				hasVision = true;
+		}
+		
+		return hasVision;
 	}
 	
 	public Object clone()
