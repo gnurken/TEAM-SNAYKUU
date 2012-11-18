@@ -20,6 +20,9 @@ public class NearestSnakeHead extends GPNode
 	{
 		return "NearestSnakeHead";
 	}
+	
+	// If the nearest snake head is visible to the evaluating snake, return that head,
+	// otherwise return the head of the evaluating snake.
 
 	@Override
 	public void eval(EvolutionState state, int thread, GPData input,
@@ -31,12 +34,11 @@ public class NearestSnakeHead extends GPNode
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
 		
-		List<Snake> snakes = new LinkedList<Snake>();
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
+		Snake thisSnake = snaykuuProblem.getActiveSnake(thread);
 		
-		for(Snake s : ((SnaykuuProblem)problem).getSession(thread).getSnakes())
-			snakes.add(s);
-		
-		snakes.remove(((SnaykuuProblem)problem).getActiveSnake(thread));
+		List<Snake> snakes = new LinkedList<Snake>(snaykuuProblem.getSession(thread).getSnakes());
+		snakes.remove(thisSnake);
 		
 		int currentDistance = Integer.MAX_VALUE;
 		
@@ -48,6 +50,11 @@ public class NearestSnakeHead extends GPNode
 				data.pos = snake.getHeadPosition();
 				currentDistance = test;
 			}
+		}
+		
+		if (!snaykuuProblem.hasVision(snaykuuProblem.getActiveTeam(thread), data.pos))
+		{
+			data.pos = thisSnake.getHeadPosition();
 		}
 	}
 }
