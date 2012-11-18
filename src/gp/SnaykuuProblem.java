@@ -86,13 +86,16 @@ public class SnaykuuProblem extends GPProblem
 		
 		for (Snake snake : team.getSnakes())
 		{
-			Position snakePosition = snake.getHeadPosition();
-			
-			int dX = Math.abs(snakePosition.getX() - position.getX());
-			int dY = Math.abs(snakePosition.getY() - position.getY());
-			
-			if ((dX <= vision) && (dY <= vision))
-				hasVision = true;
+			if (!snake.isDead())
+			{
+				Position snakePosition = snake.getHeadPosition();
+				
+				int dX = Math.abs(snakePosition.getX() - position.getX());
+				int dY = Math.abs(snakePosition.getY() - position.getY());
+				
+				if ((dX <= vision) && (dY <= vision))
+					hasVision = true;
+			}
 		}
 		
 		return hasVision;
