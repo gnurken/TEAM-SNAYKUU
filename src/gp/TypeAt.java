@@ -28,7 +28,8 @@ public class TypeAt extends GPNode
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
 		
-		Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(posData.pos);
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
+		Square square = snaykuuProblem.getSession(thread).getBoard().getSquare(posData.pos);
 		
 		if(square.isEmpty())
 			data.type = TypeData.TileType.EMPTY;
@@ -53,6 +54,9 @@ public class TypeAt extends GPNode
 					data.type = TypeData.TileType.BODY;
 			}
 		}
+		
+		if (snaykuuProblem.hasVision(snaykuuProblem.getActiveTeam(thread), posData.pos) && data.type != TypeData.TileType.WALL)
+			data.type = TypeData.TileType.EMPTY;
 		
 	}
 }
