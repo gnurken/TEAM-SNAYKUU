@@ -36,8 +36,7 @@ public class NearestFruit extends GPNode
 		Position headPos = snaykuuProblem.getActiveSnake(thread).getHeadPosition();
 		int currentDistance = Integer.MAX_VALUE;
 		
-		if(fruits.isEmpty())
-			data.pos = headPos;
+		data.pos = headPos;
 		
 		for(Position fruit : fruits)
 		{
