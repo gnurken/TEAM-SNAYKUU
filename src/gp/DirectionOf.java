@@ -6,7 +6,9 @@ import ec.gp.ADFStack;
 import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
+import gameLogic.Position;
 import gameLogic.Snake;
+import gameLogic.Team;
 
 
 public class DirectionOf extends GPNode
@@ -23,8 +25,18 @@ public class DirectionOf extends GPNode
 	{
 		SnakeData data = new SnakeData();
 		children[0].eval(state, thread, data, stack, individual, problem);
-		Snake snake = ((SnaykuuProblem)problem).getSnakeById(thread, data.snakeId);
-		((DirectionData)input).dir = snake.getCurrentDirection();		
+		
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
+		
+		Snake snake = snaykuuProblem.getSnakeById(thread, data.snakeId);
+		
+		Position snakePos = snake.getHeadPosition();
+		Team team = snaykuuProblem.getActiveTeam(thread);
+		
+		if(snaykuuProblem.hasVision(team, snakePos))
+		{
+			((DirectionData)input).dir = snake.getCurrentDirection();
+		}
+		((DirectionData)input).dir = snaykuuProblem.getActiveSnake(thread).getCurrentDirection();
 	}
-
 }

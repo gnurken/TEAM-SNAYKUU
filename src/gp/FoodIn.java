@@ -8,6 +8,7 @@ import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 import gameLogic.Position;
 import gameLogic.Square;
+import gameLogic.Team;
 
 public class FoodIn extends GPNode
 {
@@ -27,7 +28,9 @@ public class FoodIn extends GPNode
 		DirectionData direction = new DirectionData();
 		children[0].eval(state, thread, direction, stack, individual, problem);
 		
-		Position pos = ((SnaykuuProblem)problem).getActiveSnake(thread).getHeadPosition();
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
+		
+		Position pos = snaykuuProblem.getActiveSnake(thread).getHeadPosition();
 		
 		int i = 0;
 		
@@ -35,9 +38,11 @@ public class FoodIn extends GPNode
 		{
 			pos = direction.dir.calculateNextPosition(pos);
 			
-			Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(pos);
+			Team team = snaykuuProblem.getActiveTeam(thread);
 			
-			if(square.hasFruit())
+			Square square = snaykuuProblem.getSession(thread).getBoard().getSquare(pos);
+			
+			if(square.hasFruit() && snaykuuProblem.hasVision(team, pos))
 			{
 				data.value = i;
 				break;

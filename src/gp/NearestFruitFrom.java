@@ -9,6 +9,7 @@ import ec.gp.GPData;
 import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 import gameLogic.Position;
+import gameLogic.Team;
 
 public class NearestFruitFrom extends GPNode
 {
@@ -28,16 +29,21 @@ public class NearestFruitFrom extends GPNode
 		
 		children[0].eval(state, thread, posData, stack, individual, problem);
 		
-		List<Position> fruits = ((SnaykuuProblem)problem).getSession(thread).getCurrentState().getFruits();
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
+		
+		List<Position> fruits = snaykuuProblem.getSession(thread).getCurrentState().getFruits();
 		int currentDistance = Integer.MAX_VALUE;
 		
-		if(fruits.isEmpty())
-			data.pos = posData.pos;
+		Position headPos = snaykuuProblem.getActiveSnake(thread).getHeadPosition();
+		
+		Team team = snaykuuProblem.getActiveTeam(thread);
+		
+		data.pos = headPos;
 		
 		for(Position fruit : fruits)
 		{
 			int test = posData.pos.getDistanceTo(fruit);
-			if(test < currentDistance)
+			if(test < currentDistance && snaykuuProblem.hasVision(team, fruit))
 			{
 				data.pos = fruit;
 				currentDistance = test;

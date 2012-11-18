@@ -9,6 +9,7 @@ import ec.gp.GPNode;
 import gameLogic.Position;
 import gameLogic.Snake;
 import gameLogic.Square;
+import gameLogic.Team;
 
 public class DangerIn extends GPNode
 {
@@ -28,7 +29,9 @@ public class DangerIn extends GPNode
 		DirectionData direction = new DirectionData();
 		children[0].eval(state, thread, direction, stack, individual, problem);
 		
-		Position pos = ((SnaykuuProblem)problem).getActiveSnake(thread).getHeadPosition();
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
+		
+		Position pos = snaykuuProblem.getActiveSnake(thread).getHeadPosition();
 		
 		int i = 0;
 		
@@ -36,9 +39,17 @@ public class DangerIn extends GPNode
 		{
 			pos = direction.dir.calculateNextPosition(pos);
 			
-			Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(pos);
+			Team team = snaykuuProblem.getActiveTeam(thread);
 			
-			if(square.isLethal())
+			Square square = snaykuuProblem.getSession(thread).getBoard().getSquare(pos);
+			
+			if(snaykuuProblem.hasVision(team, pos))
+			{
+				if(square.isLethal())
+					break;
+			}
+			
+			else if(square.hasWall())
 				break;
 		}
 		
