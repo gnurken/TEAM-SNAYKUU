@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bot.CarefulBot;
-import bot.FruitEaterBot;
 import ec.EvolutionState;
 import ec.Individual;
 import ec.gp.GPIndividual;
@@ -38,6 +37,8 @@ public class SnaykuuProblem extends GPProblem
 	
 	// Fitness constants
 	float timeFitnessScaling = 0.2f;
+	float treeSizeScaling = 0.01f;
+	long bigTreeSize = 100;
 	
 	final float maxTime = (boardWidth * boardHeight) / (1.0f / (growthFrequency * 2.0f));
 	
@@ -210,6 +211,11 @@ public class SnaykuuProblem extends GPProblem
 				rawFitnessSum += f;
 			
 			float rawFitness = rawFitnessSum / gamesPerEval;
+			
+			//Slightly penalize larger trees to promote fast thinking
+			long treeSize = ((GPIndividual)ind).size();
+			rawFitness -= (Math.min(treeSize, bigTreeSize) / (bigTreeSize * 1.0f)) * treeSizeScaling;
+			
 			float standardizedFitness = maxRawFitness - rawFitness;
 			((KozaFitness)ind.fitness).setStandardizedFitness(state, standardizedFitness);
 			
