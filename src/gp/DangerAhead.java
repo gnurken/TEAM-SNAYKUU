@@ -19,14 +19,14 @@ public class DangerAhead extends GPNode
 	public void eval(EvolutionState state, int thread, GPData input,
 					 ADFStack stack, GPIndividual individual, Problem problem)
 	{
-		BoolData data = (BoolData)input;
+		SnaykuuProblem snaykuuProblem = (SnaykuuProblem)problem;
 		
-		Snake snake = ((SnaykuuProblem)problem).getActiveSnake(thread);
+		Snake snake = snaykuuProblem.getActiveSnake(thread);
 		
 		Position pos = snake.getCurrentDirection().calculateNextPosition(snake.getHeadPosition());
 		
-		Square square = ((SnaykuuProblem)problem).getSession(thread).getBoard().getSquare(pos);
+		Square square = snaykuuProblem.getSession(thread).getBoard().getSquare(pos);
 		
-		data.bool = square.isLethal();
+		((BoolData)input).bool = square.isLethal();
 	}
 }

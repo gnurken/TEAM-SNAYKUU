@@ -1,0 +1,118 @@
+# Copyright 2012 Thomas Zebühr and Daniel Malmqvist
+
+parent.0 = koza.params
+
+# Number of thread
+evalthreads = 12
+breedthreads = 12
+
+# Random seeds
+seed.0 = 0
+seed.1 = 1
+seed.2 = 2
+seed.3 = 3
+seed.4 = 4
+seed.5 = 5
+seed.6 = 6
+seed.7 = 7
+seed.8 = 8
+seed.9 = 9
+seed.10 = 10
+seed.11 = 11
+
+# Population size
+pop.subpop.0.size =	10
+
+# Number of trees per individual
+pop.subpop.0.species.ind.numtrees = 2
+pop.subpop.0.species.ind.tree.0 = ec.gp.GPTree
+pop.subpop.0.species.ind.tree.0.tc = tc0
+pop.subpop.0.species.ind.tree.1 = ec.gp.GPTree
+pop.subpop.0.species.ind.tree.1.tc = tc0
+
+# Number of generations
+generations = 10
+
+# Types
+# Atomic types
+gp.type.a.size = 2
+
+gp.type.a.0.name = direction
+gp.type.a.1.name = bool
+
+# Set types
+gp.type.s.size = 0
+
+# GPTreeConstraints
+gp.tc.size = 1
+
+gp.tc.0 = ec.gp.GPTreeConstraints
+gp.tc.0.name = tc0
+gp.tc.0.fset = f0
+gp.tc.0.returns = direction
+
+
+# GPNodeConstraints
+gp.nc.size = 5
+
+gp.nc.0 = ec.gp.GPNodeConstraints
+gp.nc.0.name = singleDirection
+gp.nc.0.returns = direction
+gp.nc.0.size = 0
+
+gp.nc.1 = ec.gp.GPNodeConstraints
+gp.nc.1.name = boolToBool
+gp.nc.1.size = 1
+gp.nc.1.returns = bool
+gp.nc.1.child.0 = bool
+
+gp.nc.2 = ec.gp.GPNodeConstraints
+gp.nc.2.name = binaryBoolToBoolOperator
+gp.nc.2.returns = bool
+gp.nc.2.size = 2
+gp.nc.2.child.0 = bool
+gp.nc.2.child.1 = bool
+
+gp.nc.3 = ec.gp.GPNodeConstraints
+gp.nc.3.name = singleBool
+gp.nc.3.returns = bool
+gp.nc.3.size = 0
+
+gp.nc.4 = ec.gp.GPNodeConstraints
+gp.nc.4.name = conditionalDirection
+gp.nc.4.returns = direction
+gp.nc.4.size = 3
+gp.nc.4.child.0 = bool
+gp.nc.4.child.1 = direction
+gp.nc.4.child.2 = direction
+
+# Function sets
+gp.fs.size = 1
+gp.fs.0 = ec.gp.GPFunctionSet
+gp.fs.0.name = f0
+gp.fs.0.size = 8
+
+# Functions 
+gp.fs.0.func.0 = gp.RelativeDirectionNode
+gp.fs.0.func.0.nc = singleDirection
+
+gp.fs.0.func.1 = gp.DangerAhead
+gp.fs.0.func.1.nc = singleBool
+gp.fs.0.func.2 = gp.DangerLeft
+gp.fs.0.func.2.nc = singleBool
+gp.fs.0.func.3 = gp.DangerRight
+gp.fs.0.func.3.nc = singleBool
+
+gp.fs.0.func.4 = gp.Not
+gp.fs.0.func.4.nc = boolToBool
+gp.fs.0.func.5 = gp.And
+gp.fs.0.func.5.nc = binaryBoolToBoolOperator
+gp.fs.0.func.6 = gp.Or
+gp.fs.0.func.6.nc = binaryBoolToBoolOperator
+
+gp.fs.0.func.7 = gp.IfTrue
+gp.fs.0.func.7.nc = conditionalDirection
+
+# Problem
+eval.problem = gp.SnaykuuProblem
+eval.problem.data = gp.DirectionData
