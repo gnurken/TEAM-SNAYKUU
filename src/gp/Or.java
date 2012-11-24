@@ -13,7 +13,7 @@ public class Or extends GPNode
 	@Override
 	public String toString()
 	{
-		return "And";
+		return "Or";
 	}
 
 	@Override
