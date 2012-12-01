@@ -3,6 +3,7 @@ package gp;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import bot.CarefulBot;
 import ec.EvolutionState;
@@ -49,6 +50,17 @@ public class SnaykuuProblem extends GPProblem
 		public Team activeTeam = null;
 		
 		public Map<Integer, Snake> snakes = new HashMap<Integer, Snake>();
+	}
+	
+	public int getSnakeId(int threadNumber, Snake snake)
+	{
+		for (Entry<Integer, Snake> entry : threadData.get(threadNumber).snakes.entrySet())
+		{
+			if (entry.getValue() == snake)
+				return entry.getKey();
+		}
+		
+		throw new IllegalArgumentException("No such snake");
 	}
 	
 	public Snake getSnakeById(int threadNumber, int snakeId)
