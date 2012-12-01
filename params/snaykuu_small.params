@@ -20,7 +20,7 @@ seed.9 = 9
 seed.10 = 10
 seed.11 = 11
 
-pop.subpop.0.size =	10
+pop.subpop.0.size =	20
 # Population size
 
 # Number of trees per individual
@@ -31,15 +31,16 @@ pop.subpop.0.species.ind.tree.1 = ec.gp.GPTree
 pop.subpop.0.species.ind.tree.1.tc = tc0
 
 # Number of generations
-generations = 10
+generations = 400
 
 # Types
 # Atomic types
-gp.type.a.size = 3
+gp.type.a.size = 4
 
 gp.type.a.0.name = direction
 gp.type.a.1.name = bool
 gp.type.a.2.name = snake
+gp.type.a.3.name = int
 
 # Set types
 gp.type.s.size = 0
@@ -54,7 +55,7 @@ gp.tc.0.returns = direction
 
 
 # GPNodeConstraints
-gp.nc.size = 7
+gp.nc.size = 11
 
 gp.nc.0 = ec.gp.GPNodeConstraints
 gp.nc.0.name = singleDirection
@@ -98,6 +99,30 @@ gp.nc.6.size = 1
 gp.nc.6.returns = direction
 gp.nc.6.child.0 = snake
 
+gp.nc.7 = ec.gp.GPNodeConstraints
+gp.nc.7.name = singleInt
+gp.nc.7.returns = int
+gp.nc.7.size = 0
+
+gp.nc.8 = ec.gp.GPNodeConstraints
+gp.nc.8.name = directionToInt
+gp.nc.8.size = 1
+gp.nc.8.returns = int
+gp.nc.8.child.0 = direction
+
+gp.nc.9 = ec.gp.GPNodeConstraints
+gp.nc.9.name = binaryBoolIntOperator
+gp.nc.9.returns = bool
+gp.nc.9.size = 2
+gp.nc.9.child.0 = int
+gp.nc.9.child.1 = int
+
+gp.nc.10 = ec.gp.GPNodeConstraints
+gp.nc.10.name = directionToDirection
+gp.nc.10.size = 1
+gp.nc.10.returns = direction
+gp.nc.10.child.0 = direction
+
 # Function sets
 gp.fs.size = 1
 gp.fs.0 = ec.gp.GPFunctionSet
@@ -105,31 +130,40 @@ gp.fs.0.name = f0
 gp.fs.0.size = 10
 
 # Functions 
-gp.fs.0.func.0 = gp.RelativeDirectionNode
-gp.fs.0.func.0.nc = singleDirection
 
-gp.fs.0.func.1 = gp.DangerAhead
-gp.fs.0.func.1.nc = singleBool
-gp.fs.0.func.2 = gp.DangerLeft
-gp.fs.0.func.2.nc = singleBool
-gp.fs.0.func.3 = gp.DangerRight
-gp.fs.0.func.3.nc = singleBool
+#gp.fs.0.func.0 = gp.Not
+#gp.fs.0.func.0.nc = boolToBool
+#gp.fs.0.func.1 = gp.And
+#gp.fs.0.func.1.nc = binaryBoolToBoolOperator
+#gp.fs.0.func.2 = gp.Or
+#gp.fs.0.func.2.nc = binaryBoolToBoolOperator
 
-gp.fs.0.func.4 = gp.Not
-gp.fs.0.func.4.nc = boolToBool
-gp.fs.0.func.5 = gp.And
-gp.fs.0.func.5.nc = binaryBoolToBoolOperator
-gp.fs.0.func.6 = gp.Or
-gp.fs.0.func.6.nc = binaryBoolToBoolOperator
+gp.fs.0.func.0 = gp.IfTrue
+gp.fs.0.func.0.nc = conditionalDirection
 
-gp.fs.0.func.7 = gp.IfTrue
-gp.fs.0.func.7.nc = conditionalDirection
+gp.fs.0.func.1 = gp.ThisSnakeNode
+gp.fs.0.func.1.nc = singleSnake
 
-gp.fs.0.func.8 = gp.ThisSnakeNode
-gp.fs.0.func.8.nc = singleSnake
+gp.fs.0.func.2 = gp.DirectionOf
+gp.fs.0.func.2.nc = snakeToDirection
 
-gp.fs.0.func.9 = gp.DirectionOf
-gp.fs.0.func.9.nc = snakeToDirection
+gp.fs.0.func.3 = gp.LeftOf
+gp.fs.0.func.3.nc = directionToDirection
+gp.fs.0.func.4 = gp.RightOf
+gp.fs.0.func.4.nc = directionToDirection
+
+gp.fs.0.func.5 = gp.DangerIn
+gp.fs.0.func.5.nc = directionToInt
+
+gp.fs.0.func.6 = gp.IntConstant
+gp.fs.0.func.6.nc = singleInt
+
+gp.fs.0.func.7 = gp.LessThan
+gp.fs.0.func.7.nc = binaryBoolIntOperator
+gp.fs.0.func.8 = gp.GreaterThan
+gp.fs.0.func.8.nc = binaryBoolIntOperator
+gp.fs.0.func.9 = gp.IntEqualTo
+gp.fs.0.func.9.nc = binaryBoolIntOperator
 
 # Problem
 eval.problem = gp.SnaykuuProblem
