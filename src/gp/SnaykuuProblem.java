@@ -12,6 +12,7 @@ import ec.gp.GPIndividual;
 import ec.gp.GPNode;
 import ec.gp.GPProblem;
 import ec.gp.koza.KozaFitness;
+import ec.simple.SimpleProblemForm;
 import ec.util.Parameter;
 import gameLogic.GameObjectType;
 import gameLogic.Metadata;
@@ -20,7 +21,7 @@ import gameLogic.Session;
 import gameLogic.Snake;
 import gameLogic.Team;
 
-public class SnaykuuProblem extends GPProblem
+public class SnaykuuProblem extends GPProblem implements SimpleProblemForm
 {
 	private boolean graphical = false;
 	private int vision = 10;
@@ -117,7 +118,7 @@ public class SnaykuuProblem extends GPProblem
 	public Object clone()
 	{
 		SnaykuuProblem newProblem = (SnaykuuProblem)super.clone();
-		newProblem.input = input;
+		newProblem.input = (DirectionData)input.clone();
 		return newProblem;
 	}
 	
@@ -216,7 +217,7 @@ public class SnaykuuProblem extends GPProblem
 			
 			// TODO: evaluate fitness better
 			
-			float maxRawFitness = timeFitnessScaling + 1.0f;
+			float maxRawFitness = 1.0f + timeFitnessScaling + treeSizeScaling;
 			
 			float rawFitnessSum = 0.0f;
 			for (float f : fitness)
@@ -234,14 +235,30 @@ public class SnaykuuProblem extends GPProblem
 			ind.evaluated = true;
 			
 			System.out.println("Generation " + state.generation + ".");
-			System.out.println("Team evaluated, fitnes: " + rawFitness);
+			System.out.println("Team evaluated, fitnes: " + standardizedFitness + ", ");
 			GPIndividual individual = (GPIndividual)ind;
 			for (int i = 0; i < individual.trees.length; ++i)
 			{
-				System.out.println("Tree " + (i + 1) + ":");
+				System.out.println("Snake " + (i + 1) + ":");
 				individual.trees[i].printTreeForHumans(state, 0);
 			}
 			System.out.println();
+		}
+	}
+	
+	public void describe(
+	        final EvolutionState state, 
+	        final Individual ind, 
+	        final int subpopulation,
+	        final int threadnum,
+	        final int log)
+	{
+		System.out.println("Best team of this run:");
+		GPIndividual individual = (GPIndividual)ind;
+		for (int i = 0; i < individual.trees.length; ++i)
+		{
+			System.out.println("Snake " + (i + 1) + ":");
+			individual.trees[i].printTreeForHumans(state, 0);
 		}
 	}
 }
