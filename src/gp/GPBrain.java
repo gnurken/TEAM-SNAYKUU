@@ -8,6 +8,7 @@ import gameLogic.Brain;
 import gameLogic.Direction;
 import gameLogic.GameState;
 import gameLogic.Snake;
+import gp.data.DirectionData;
 
 public class GPBrain implements Brain
 {

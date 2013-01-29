@@ -205,89 +205,89 @@ gp.fs.0.name = f0
 gp.fs.0.size = 31
 
 # Functions 
-gp.fs.0.func.0 = gp.DirectionNode
+gp.fs.0.func.0 = gp.nodes.DirectionNode
 gp.fs.0.func.0.nc = singleDirection
 
-gp.fs.0.func.1 = gp.RoundsUntilGrowth
+gp.fs.0.func.1 = gp.nodes.RoundsUntilGrowth
 gp.fs.0.func.1.nc = singleInt
 
-gp.fs.0.func.2 = gp.LessThan
+gp.fs.0.func.2 = gp.nodes.LessThan
 gp.fs.0.func.2.nc = binaryBoolIntOperator
-gp.fs.0.func.3 = gp.GreaterThan
+gp.fs.0.func.3 = gp.nodes.GreaterThan
 gp.fs.0.func.3.nc = binaryBoolIntOperator
-gp.fs.0.func.4 = gp.IntEqualTo
+gp.fs.0.func.4 = gp.nodes.IntEqualTo
 gp.fs.0.func.4.nc = binaryBoolIntOperator
 
-gp.fs.0.func.5 = gp.IfTrue
+gp.fs.0.func.5 = gp.nodes.IfTrue
 gp.fs.0.func.5.nc = conditionalDirection
 
-gp.fs.0.func.6 = gp.Not
+gp.fs.0.func.6 = gp.nodes.Not
 gp.fs.0.func.6.nc = boolToBool
 
-gp.fs.0.func.7 = gp.DistanceTo
+gp.fs.0.func.7 = gp.nodes.DistanceTo
 gp.fs.0.func.7.nc = positionToInt
-gp.fs.0.func.8 = gp.DistanceToX
+gp.fs.0.func.8 = gp.nodes.DistanceToX
 gp.fs.0.func.8.nc = positionToInt
-gp.fs.0.func.9 = gp.DistanceToY
+gp.fs.0.func.9 = gp.nodes.DistanceToY
 gp.fs.0.func.9.nc = positionToInt
-gp.fs.0.func.10 = gp.DistanceFrom
+gp.fs.0.func.10 = gp.nodes.DistanceFrom
 gp.fs.0.func.10.nc = doublePosToInt
 
-gp.fs.0.func.11 = gp.TypeAt
+gp.fs.0.func.11 = gp.nodes.TypeAt
 gp.fs.0.func.11.nc = typeAtPosition
 
-gp.fs.0.func.12 = gp.NearestFruitFrom
+gp.fs.0.func.12 = gp.nodes.NearestFruitFrom
 gp.fs.0.func.12.nc = positionToPosition
-gp.fs.0.func.13 = gp.NearestFruit
+gp.fs.0.func.13 = gp.nodes.NearestFruit
 gp.fs.0.func.13.nc = singlePosition
 
-gp.fs.0.func.14 = gp.And
+gp.fs.0.func.14 = gp.nodes.And
 gp.fs.0.func.14.nc = binaryBoolOperator
-gp.fs.0.func.15 = gp.Or
+gp.fs.0.func.15 = gp.nodes.Or
 gp.fs.0.func.15.nc = binaryBoolOperator
 
-gp.fs.0.func.16 = gp.HeadOf
+gp.fs.0.func.16 = gp.nodes.HeadOf
 gp.fs.0.func.16.nc = snakeToPosition
-gp.fs.0.func.17 = gp.TailOf
+gp.fs.0.func.17 = gp.nodes.TailOf
 gp.fs.0.func.17.nc = snakeToPosition
 
-gp.fs.0.func.18 = gp.NearestSnakeHead
+gp.fs.0.func.18 = gp.nodes.NearestSnakeHead
 gp.fs.0.func.18.nc = positionToPosition
 
-gp.fs.0.func.19 = gp.IfFriendly
+gp.fs.0.func.19 = gp.nodes.IfFriendly
 gp.fs.0.func.19.nc = snakeToBool
 
-gp.fs.0.func.20 = gp.LeftOf
+gp.fs.0.func.20 = gp.nodes.LeftOf
 gp.fs.0.func.20.nc = directionToDirection
-gp.fs.0.func.21 = gp.RightOf
+gp.fs.0.func.21 = gp.nodes.RightOf
 gp.fs.0.func.21.nc = directionToDirection
 
-gp.fs.0.func.22 = gp.TypeNode
+gp.fs.0.func.22 = gp.nodes.TypeNode
 gp.fs.0.func.22.nc = singleType
 
-gp.fs.0.func.23 = gp.InDirectionFrom
+gp.fs.0.func.23 = gp.nodes.InDirectionFrom
 gp.fs.0.func.23.nc = directionAndPositionToPosition
 
-gp.fs.0.func.24 = gp.TypeEqualTo
+gp.fs.0.func.24 = gp.nodes.TypeEqualTo
 gp.fs.0.func.24.nc = binaryBoolTypeOperator
 
-gp.fs.0.func.25 = gp.DirectionEqualTo
+gp.fs.0.func.25 = gp.nodes.DirectionEqualTo
 gp.fs.0.func.25.nc = binaryBoolDirectionOperator
 
-gp.fs.0.func.26 = gp.DangerIn
+gp.fs.0.func.26 = gp.nodes.DangerIn
 gp.fs.0.func.26.nc = directionToInt
-gp.fs.0.func.27 = gp.FoodIn
+gp.fs.0.func.27 = gp.nodes.FoodIn
 gp.fs.0.func.27.nc = directionToInt
 
-gp.fs.0.func.28 = gp.DirectionOf
+gp.fs.0.func.28 = gp.nodes.DirectionOf
 gp.fs.0.func.28.nc = snakeToDirection
 
-gp.fs.0.func.29 = gp.SnakeNode
+gp.fs.0.func.29 = gp.nodes.SnakeNode
 gp.fs.0.func.29.nc = singleSnake
 
-gp.fs.0.func.30 = gp.IntConstant
+gp.fs.0.func.30 = gp.nodes.IntConstant
 gp.fs.0.func.30.nc = singleInt
 
 # Problem
 eval.problem = gp.SnaykuuProblem
-eval.problem.data = gp.DirectionData
+eval.problem.data = gp.data.DirectionData

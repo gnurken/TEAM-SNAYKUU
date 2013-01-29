@@ -20,6 +20,7 @@ import gameLogic.Position;
 import gameLogic.Session;
 import gameLogic.Snake;
 import gameLogic.Team;
+import gp.data.DirectionData;
 
 public class SnaykuuProblem extends GPProblem implements SimpleProblemForm
 {
@@ -217,7 +218,7 @@ public class SnaykuuProblem extends GPProblem implements SimpleProblemForm
 			
 			// TODO: evaluate fitness better
 			
-			float maxRawFitness = 1.0f + timeFitnessScaling + treeSizeScaling;
+			float maxRawFitness = 1.0f + timeFitnessScaling;
 			
 			float rawFitnessSum = 0.0f;
 			for (float f : fitness)
@@ -228,6 +229,9 @@ public class SnaykuuProblem extends GPProblem implements SimpleProblemForm
 			//Slightly penalize larger trees to promote fast thinking
 			long treeSize = ((GPIndividual)ind).size();
 			rawFitness -= (Math.min(treeSize, bigTreeSize) / (bigTreeSize * 1.0f)) * treeSizeScaling;
+			
+			// Set any negative raw fitness to zero.
+			rawFitness = Math.max(0f, rawFitness);
 			
 			float standardizedFitness = maxRawFitness - rawFitness;
 			((KozaFitness)ind.fitness).setStandardizedFitness(state, standardizedFitness);

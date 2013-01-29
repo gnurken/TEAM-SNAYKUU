@@ -3,8 +3,8 @@
 parent.0 = koza.params
 
 # Number of thread
-evalthreads = 12
-breedthreads = 12
+evalthreads = 4
+breedthreads = 4
 
 # Random seeds
 seed.0 = 0
@@ -20,7 +20,7 @@ seed.9 = 9
 seed.10 = 10
 seed.11 = 11
 
-pop.subpop.0.size =	20
+pop.subpop.0.size =	10
 # Population size
 
 # Number of trees per individual
@@ -31,7 +31,7 @@ pop.subpop.0.species.ind.tree.1 = ec.gp.GPTree
 pop.subpop.0.species.ind.tree.1.tc = tc0
 
 # Number of generations
-generations = 400
+generations = 50
 
 # Types
 # Atomic types
@@ -131,40 +131,40 @@ gp.fs.0.size = 10
 
 # Functions 
 
-#gp.fs.0.func.0 = gp.Not
+#gp.fs.0.func.0 = gp.nodes.Not
 #gp.fs.0.func.0.nc = boolToBool
-#gp.fs.0.func.1 = gp.And
+#gp.fs.0.func.1 = gp.nodes.And
 #gp.fs.0.func.1.nc = binaryBoolToBoolOperator
-#gp.fs.0.func.2 = gp.Or
+#gp.fs.0.func.2 = gp.nodes.Or
 #gp.fs.0.func.2.nc = binaryBoolToBoolOperator
 
-gp.fs.0.func.0 = gp.IfTrue
+gp.fs.0.func.0 = gp.nodes.IfTrue
 gp.fs.0.func.0.nc = conditionalDirection
 
-gp.fs.0.func.1 = gp.ThisSnakeNode
+gp.fs.0.func.1 = gp.nodes.ThisSnakeNode
 gp.fs.0.func.1.nc = singleSnake
 
-gp.fs.0.func.2 = gp.DirectionOf
+gp.fs.0.func.2 = gp.nodes.DirectionOf
 gp.fs.0.func.2.nc = snakeToDirection
 
-gp.fs.0.func.3 = gp.LeftOf
+gp.fs.0.func.3 = gp.nodes.LeftOf
 gp.fs.0.func.3.nc = directionToDirection
-gp.fs.0.func.4 = gp.RightOf
+gp.fs.0.func.4 = gp.nodes.RightOf
 gp.fs.0.func.4.nc = directionToDirection
 
-gp.fs.0.func.5 = gp.DangerIn
+gp.fs.0.func.5 = gp.nodes.DangerIn
 gp.fs.0.func.5.nc = directionToInt
 
-gp.fs.0.func.6 = gp.IntConstant
+gp.fs.0.func.6 = gp.nodes.IntConstant
 gp.fs.0.func.6.nc = singleInt
 
-gp.fs.0.func.7 = gp.LessThan
+gp.fs.0.func.7 = gp.nodes.LessThan
 gp.fs.0.func.7.nc = binaryBoolIntOperator
-gp.fs.0.func.8 = gp.GreaterThan
+gp.fs.0.func.8 = gp.nodes.GreaterThan
 gp.fs.0.func.8.nc = binaryBoolIntOperator
-gp.fs.0.func.9 = gp.IntEqualTo
+gp.fs.0.func.9 = gp.nodes.IntEqualTo
 gp.fs.0.func.9.nc = binaryBoolIntOperator
 
 # Problem
 eval.problem = gp.SnaykuuProblem
-eval.problem.data = gp.DirectionData
+eval.problem.data = gp.data.DirectionData
