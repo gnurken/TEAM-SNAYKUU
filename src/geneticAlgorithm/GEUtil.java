@@ -99,11 +99,9 @@ public final class GEUtil
 	
 	public static String[] concatinate(String[] A, String[] B)
 	{
-	   int aLen = A.length;
-	   int bLen = B.length;
-	   String[] C= new String[aLen+bLen];
-	   System.arraycopy(A, 0, C, 0, aLen);
-	   System.arraycopy(B, 0, C, aLen, bLen);
+	   String[] C= new String[A.length + B.length];
+	   System.arraycopy(A, 0, C, 0, A.length);
+	   System.arraycopy(B, 0, C, A.length, B.length);
 	   return C;
 	}
 	
@@ -121,6 +119,9 @@ public final class GEUtil
 		
 		public ScoringPairTuple(int maxDepth, double[] normalScoringParameters, double[] reverseScoringParameters)
 		{
+			assert normalScoringParameters.length == normalScoringCategories.length;
+			assert reverseScoringParameters.length == reverseScoringCategories.length;
+		
 			int i = 0;
 			for (String category : normalScoringCategories)
 			{
@@ -157,6 +158,8 @@ public final class GEUtil
 		
 		public ScoringDistanceTuple(List<List<Integer>> distances)
 		{
+			assert distances.size() == allScoringCategories.length;
+		
 			int i = 0;
 			for(String category : allScoringCategories)
 			{
