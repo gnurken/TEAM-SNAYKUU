@@ -51,19 +51,19 @@ public class GEBrain implements Brain
 	}
 	
 	private Snake m_thisSnake;
-	private List<Snake> m_allySnakes;
 	
-	public void brainSetup(Snake thisSnake, List<Snake> allyList)
+	public void setSnake(Snake thisSnake)
 	{
 		m_thisSnake = thisSnake;
-		m_allySnakes = allyList;
 	}
 	
-	private List<GEBrain> m_allies;
+	private Set<GEBrain> m_allyBrains;
+	private Set<Snake> m_allySnakes;
 	
-	public void setAllies(List<GEBrain> allies)
+	public void setAllies(Set<GEBrain> allyBrains, Set<Snake> allySnakes)
 	{
-		m_allies = allies;
+		m_allyBrains = allyBrains;
+		m_allySnakes = allySnakes;
 	}
 	
 	private Map<Direction, ScoringDistanceTuple> m_scoringDistances;
@@ -72,6 +72,7 @@ public class GEBrain implements Brain
 	ScoringDistanceTuple search(GameState gameState, Position startPosition)
 	{
 		//hej thomas :D
+		//hej daniel :P
 		List<List<Integer>> distanceLists = new LinkedList<List<Integer>>();
 		List<Integer> fruitDistances = new LinkedList<Integer>();
 		List<Integer> wallDistances = new LinkedList<Integer>();
@@ -100,7 +101,7 @@ public class GEBrain implements Brain
 		  
 		currentToSearch.add(startPosition);
 	  
-		do
+		while(!currentToSearch.isEmpty() && depth < m_maxDepth)
 		{
 			++depth;
 	   
@@ -186,7 +187,7 @@ public class GEBrain implements Brain
 
 			currentToSearch = nextToSearch;
 			nextToSearch = new LinkedList<Position>();
-		} while(!currentToSearch.isEmpty() && depth < m_maxDepth);
+		}
 		
 		return new ScoringDistanceTuple(distanceLists);
 	}
