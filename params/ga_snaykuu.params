@@ -1,0 +1,35 @@
+# Copyright 2013 Thomas Zebühr and Daniel Malmqvist
+
+parent.0 = koza.params
+
+# Number of threads
+evalthreads = 4
+breedthreads = 4
+
+# Random seeds
+seed.0 = 0
+seed.1 = 1
+seed.2 = 2
+seed.3 = 3
+
+# Problem
+eval.problem = geneticAlgorithm.GASnaykuuProblem
+
+# Number of generations
+generations = 10
+
+# Population size
+pop.subpop.0.size =	10
+
+pop.subpop.0.species = ec.vector.DoubleVectorSpecies
+pop.subpop.0.species.ind = ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.fitness = ec.simple.SimpleFitness
+
+pop.subpop.0.species.genome-size = 36
+
+# Set gene min and max values.
+# Odd-numbered genes (constants) should have a relatively large range
+# Even numbred genes (exponent bases) shaloud have a much smaller range
+
+pop.subpop.0.species.min-gene = -1000000
+pop.subpop.0.species.max-gene =  1000000
