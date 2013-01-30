@@ -152,7 +152,7 @@ public final class GEUtil
 		}
 	}
 	
-	public class ScoringDistanceTuple
+	public static class ScoringDistanceTuple
 	{
 		public Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
 		
