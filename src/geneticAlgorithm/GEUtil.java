@@ -43,7 +43,7 @@ public final class GEUtil
 		if (nextSquare.isLethal())
 		{
 			boolean growthRound = ((currentRound + 1) % gameState.getMetadata().getGrowthFrequency()) == 0;
-			if (growthRound)
+			if (!growthRound)
 			{
 				for (Snake tailSnake : gameState.getSnakes())
 				{
