@@ -30,7 +30,7 @@ import geneticAlgorithm.GEUtil.ScoringPairTuple;
 public class GEBrain implements Brain
 {
 	private ScoringPairTuple m_visibleSquaresScoring, m_allyVisibleSquaresScoring;
-	private int m_maxDepth;
+	private int m_vision;
 	
 	public ScoringPairTuple getVisibleSquaresScoring()
 	{
@@ -43,11 +43,11 @@ public class GEBrain implements Brain
 	}
 	
 	public GEBrain(ScoringPairTuple visibleSquaresScoring,
-	               ScoringPairTuple allyVisibleSquaresScoring, int maxDepth)
+	               ScoringPairTuple allyVisibleSquaresScoring, int vision)
 	{
 		m_visibleSquaresScoring = visibleSquaresScoring;
 		m_allyVisibleSquaresScoring = allyVisibleSquaresScoring;
-		m_maxDepth = maxDepth;
+		m_vision = vision;
 	}
 	
 	private Snake m_thisSnake;
@@ -101,7 +101,7 @@ public class GEBrain implements Brain
 		  
 		currentToSearch.add(startPosition);
 	  
-		while(!currentToSearch.isEmpty() && depth < m_maxDepth)
+		while(!currentToSearch.isEmpty() && depth < m_vision)
 		{
 			++depth;
 	   
@@ -116,70 +116,76 @@ public class GEBrain implements Brain
 				if (currentSquare.hasFruit())
 					fruitDistances.add(depth);
 				
-				//Check for walls
-				if (currentSquare.hasWall())
-					wallDistances.add(depth);
-				
-				Set<Snake> otherSnakes = gameState.getSnakes();
-				otherSnakes.remove(m_thisSnake);
-				
-				for (Snake otherSnake : otherSnakes)
-				{
-					//If otherSnake is an enemy
-					if (!m_allySnakes.contains(otherSnake))
-					{
-						//Check for enemy snake heads and if it's alive, else it will count as a body
-						if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-							enemyHeadDistances.add(depth);
-						else if (otherSnake.getHeadPosition().equals(currentPosition) && otherSnake.isDead())
-							enemyBodyDistances.add(depth);
-						
-						//Check for enemy tails
-						if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-							enemyTailDistances.add(depth);
-						else if (otherSnake.getTailPosition().equals(currentPosition) && otherSnake.isDead())
-							enemyBodyDistances.add(depth);
-						
-						//Check for enemy body position but not the head or tail
-						for (Position enemyBodyPosition : otherSnake.getSegments())
-						{
-							if (enemyBodyPosition.equals(currentPosition) && !enemyBodyPosition.equals(otherSnake.getTailPosition()) && !enemyBodyPosition.equals(otherSnake.getHeadPosition()))
-								enemyBodyDistances.add(depth);
-						}
-						
-					} 
-					
-					//If otherSnake is an ally
-					if (m_allySnakes.contains(otherSnake))
-					{
-						//Check for ally snake heads and if it's alive, else it will count as a body
-						if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-							allyHeadDistances.add(depth);
-						else if (otherSnake.getHeadPosition().equals(currentPosition) && otherSnake.isDead())
-							allyBodyDistances.add(depth);
-						
-						//Check for ally tails if it's alive, else it will count as a body
-						if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-							allyTailDistances.add(depth);
-						else if (otherSnake.getTailPosition().equals(currentPosition) && otherSnake.isDead())
-							allyBodyDistances.add(depth);
-						
-						//Check for ally body position but not the head or tail
-						for (Position allyBodyPosition : otherSnake.getSegments())
-						{
-							if (allyBodyPosition.equals(currentPosition) && !allyBodyPosition.equals(otherSnake.getTailPosition()) && !allyBodyPosition.equals(otherSnake.getHeadPosition()))
-								allyBodyDistances.add(depth);
-						}
-					}
-					
-				}
-				
 				//Check neighbours
 				for (Direction direction : Direction.values())
 				{
 					Position neighbor = direction.calculateNextPosition(currentPosition);
-					if (!searched.contains(neighbor) && GEUtil.isSurvivable(currentPosition, direction, gameState, m_currentRound + depth))
+					if (searched.contains(neighbor))
+						break;
+					
+					if (GEUtil.isSurvivable(currentPosition, direction, gameState, m_currentRound + depth))
 						nextToSearch.add(neighbor);
+					else
+					{
+						//Check for walls
+						if (currentSquare.hasWall())
+							wallDistances.add(depth);
+						
+						Set<Snake> otherSnakes = gameState.getSnakes();
+						otherSnakes.remove(m_thisSnake);
+						
+						for (Snake otherSnake : otherSnakes)
+						{
+							//If otherSnake is an enemy
+							if (!m_allySnakes.contains(otherSnake))
+							{
+								//Check for enemy snake heads and if it's alive, else it will count as a body
+								if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
+									enemyHeadDistances.add(depth);
+								else if (otherSnake.getHeadPosition().equals(currentPosition) && otherSnake.isDead())
+									enemyBodyDistances.add(depth);
+								
+								//Check for enemy tails
+								if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
+									enemyTailDistances.add(depth);
+								else if (otherSnake.getTailPosition().equals(currentPosition) && otherSnake.isDead())
+									enemyBodyDistances.add(depth);
+								
+								//Check for enemy body position but not the head or tail
+								for (Position enemyBodyPosition : otherSnake.getSegments())
+								{
+									if (enemyBodyPosition.equals(currentPosition) && !enemyBodyPosition.equals(otherSnake.getTailPosition()) && !enemyBodyPosition.equals(otherSnake.getHeadPosition()))
+										enemyBodyDistances.add(depth);
+								}
+								
+							} 
+							
+							//If otherSnake is an ally
+							if (m_allySnakes.contains(otherSnake))
+							{
+								//Check for ally snake heads and if it's alive, else it will count as a body
+								if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
+									allyHeadDistances.add(depth);
+								else if (otherSnake.getHeadPosition().equals(currentPosition) && otherSnake.isDead())
+									allyBodyDistances.add(depth);
+								
+								//Check for ally tails if it's alive, else it will count as a body
+								if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
+									allyTailDistances.add(depth);
+								else if (otherSnake.getTailPosition().equals(currentPosition) && otherSnake.isDead())
+									allyBodyDistances.add(depth);
+								
+								//Check for ally body position but not the head or tail
+								for (Position allyBodyPosition : otherSnake.getSegments())
+								{
+									if (allyBodyPosition.equals(currentPosition) && !allyBodyPosition.equals(otherSnake.getTailPosition()) && !allyBodyPosition.equals(otherSnake.getHeadPosition()))
+										allyBodyDistances.add(depth);
+								}
+							}
+						}
+						
+						searched.add(neighbor);
+					}
 				}
 
 				searched.add(currentPosition); 
