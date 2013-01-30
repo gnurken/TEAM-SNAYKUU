@@ -25,14 +25,14 @@ public final class GEUtil
 		public double score;
 		
 		@Override
-		public int compareTo(ScoredDirection other) {
+		public int compareTo(ScoredDirection other)
+		{
 			if (score > other.score)
 				return -1;
 			else if (score < other.score)
 				return 1;
 			else
 				return 0;
-					
 		}
 	}
 	
@@ -75,7 +75,7 @@ public final class GEUtil
 		return survivableDirections;
 	}
 	
-	public class ScoringPair
+	public static class ScoringPair
 	{
 		public int maxDepth;
 		public boolean reverseDepth;
@@ -113,26 +113,26 @@ public final class GEUtil
 	
 	public static String[] allScoringCategories = concatinate(normalScoringCategories, reverseScoringCategories);
 
-	public class ScoringPairTuple
+	public static class ScoringPairTuple
 	{
 		public Map<String, ScoringPair> scoringPairs = new HashMap<String, ScoringPair>();
 		
-		public ScoringPairTuple(int maxDepth, double[] normalScoringParameters, double[] reverseScoringParameters)
+		public ScoringPairTuple(int maxDepth, List<Double> normalScoringParameters, List<Double> reverseScoringParameters)
 		{
-			assert normalScoringParameters.length == normalScoringCategories.length;
-			assert reverseScoringParameters.length == reverseScoringCategories.length;
+			assert normalScoringParameters.size() == normalScoringCategories.length;
+			assert reverseScoringParameters.size() == reverseScoringCategories.length;
 		
 			int i = 0;
 			for (String category : normalScoringCategories)
 			{
-				scoringPairs.put(category, new ScoringPair(normalScoringParameters[i], normalScoringParameters[i+1], maxDepth, false));
+				scoringPairs.put(category, new ScoringPair(normalScoringParameters.get(i), normalScoringParameters.get(i+1), maxDepth, false));
 				i += 2;
 			}
 		
 			i = 0;
 			for (String category : reverseScoringCategories)
 			{
-				scoringPairs.put(category, new ScoringPair(reverseScoringParameters[i], reverseScoringParameters[i+1], maxDepth, true));
+				scoringPairs.put(category, new ScoringPair(reverseScoringParameters.get(i), reverseScoringParameters.get(i+1), maxDepth, true));
 				i += 2;
 			}
 		}
@@ -152,7 +152,7 @@ public final class GEUtil
 		}
 	}
 	
-	public class ScoringDistanceTuple
+	public static class ScoringDistanceTuple
 	{
 		public Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
 		
