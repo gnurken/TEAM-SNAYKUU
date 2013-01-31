@@ -1,6 +1,6 @@
 # Copyright 2013 Thomas Zebühr and Daniel Malmqvist
 
-parent.0 = koza.params
+parent.0 = simple.params
 
 # Number of threads
 evalthreads = 4
@@ -12,20 +12,33 @@ seed.1 = 1
 seed.2 = 2
 seed.3 = 3
 
-# Problem
-eval.problem = geneticAlgorithm.GASnaykuuProblem
-
 # Number of generations
 generations = 10
 
 # Population size
-pop.subpop.0.size =	10
+pop.subpops	= 1
+pop.subpop.0 = ec.Subpopulation
 
-pop.subpop.0.species = ec.vector.DoubleVectorSpecies
+pop.subpop.0.size =	10
+pop.subpop.0.duplicate-retries 	= 0
+
+pop.subpop.0.species = ec.vector.FloatVectorSpecies
 pop.subpop.0.species.ind = ec.vector.DoubleVectorIndividual
 pop.subpop.0.species.fitness = ec.simple.SimpleFitness
 
 pop.subpop.0.species.genome-size = 36
+pop.subpop.0.species.crossover-type	= two
+pop.subpop.0.species.mutation-prob	= 0.05
+
+pop.subpop.0.species.pipe = ec.vector.breed.VectorMutationPipeline
+pop.subpop.0.species.pipe.source.0 = ec.vector.breed.VectorCrossoverPipeline
+pop.subpop.0.species.pipe.source.0.source.0	= ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.0.source.1	= ec.select.TournamentSelection
+
+select.tournament.size = 2
+
+# Problem
+eval.problem = geneticAlgorithm.GASnaykuuProblem
 
 # Set gene min and max values.
 # Odd-numbered genes (constants) should have a relatively large range
