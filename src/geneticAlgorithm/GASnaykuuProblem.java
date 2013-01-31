@@ -98,6 +98,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 				contestantBrains.add(brain);
 				
 				Snake snake = new Snake(objectType, "Contestant" + i, brain, Color.BLUE);
+				brain.setSnake(snake);
 				session.addSnake(snake, contestants);
 			}
 			
