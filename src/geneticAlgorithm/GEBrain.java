@@ -107,7 +107,7 @@ public class GEBrain implements Brain
 				Square currentSquare = gameState.getBoard().getSquare(currentPosition);
 				    
 				openSquareDistances.add(depth);
-				    
+
 				//Check for fruit
 				if (currentSquare.hasFruit())
 					fruitDistances.add(depth);
@@ -115,6 +115,7 @@ public class GEBrain implements Brain
 				//Check neighbours
 				for (Direction direction : Direction.values())
 				{
+					int nextDepth = depth + 1;
 					Position neighbor = direction.calculateNextPosition(currentPosition);
 					if (searched.contains(neighbor))
 						break;
@@ -125,7 +126,7 @@ public class GEBrain implements Brain
 					{
 						//Check for walls
 						if (currentSquare.hasWall())
-							wallDistances.add(depth);
+							wallDistances.add(nextDepth);
 						
 						Set<Snake> otherSnakes = gameState.getSnakes();
 						otherSnakes.remove(m_thisSnake);
@@ -141,13 +142,13 @@ public class GEBrain implements Brain
 								{
 									//Check for enemy snake heads and if it's alive
 									if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-										enemyHeadDistances.add(depth);
+										enemyHeadDistances.add(nextDepth);
 									//Check for enemy tails and if it's alive
 									else if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-										enemyTailDistances.add(depth);
+										enemyTailDistances.add(nextDepth);
 									//All other cases counts as enemy body
 									else
-										enemyBodyDistances.add(depth);
+										enemyBodyDistances.add(nextDepth);
 									
 									
 								} 
@@ -157,13 +158,13 @@ public class GEBrain implements Brain
 								{
 									//Check for ally snake heads and if it's alive
 									if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-										allyHeadDistances.add(depth);
+										allyHeadDistances.add(nextDepth);
 									//Check for ally tails if it's alive
 									else if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-										allyTailDistances.add(depth);
+										allyTailDistances.add(nextDepth);
 									//All other cases counts as ally body
 									else
-										allyBodyDistances.add(depth);
+										allyBodyDistances.add(nextDepth);
 									
 								}
 							}
