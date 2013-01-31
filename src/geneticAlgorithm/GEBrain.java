@@ -1,5 +1,6 @@
 package geneticAlgorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -58,12 +59,17 @@ public class GEBrain implements Brain
 		m_thisSnake = thisSnake;
 	}
 	
-	private Set<GEBrain> m_allyBrains;
+	public Snake getSnake()
+	{
+		return m_thisSnake;
+	}
+	
+	private Set<GEBrain> m_livingAllyBrains;
 	private Set<Snake> m_allySnakes;
 	
 	public void setAllies(Set<GEBrain> allyBrains, Set<Snake> allySnakes)
 	{
-		m_allyBrains = allyBrains;
+		m_livingAllyBrains = allyBrains;
 		m_allySnakes = allySnakes;
 	}
 	
@@ -240,7 +246,16 @@ public class GEBrain implements Brain
 		
 		Set<Position> allyVisiblePositions = new HashSet<Position>();
 		
-		for (GEBrain ally : m_allyBrains)
+		// Remove the brains of dead snakes from m_livingAllyBrains
+		List<GEBrain> deadAllyBrains = new ArrayList<GEBrain>();
+		for (GEBrain brain : m_livingAllyBrains)
+		{
+			if (brain.getSnake().isDead())
+				deadAllyBrains.add(brain);
+		}
+		m_livingAllyBrains.removeAll(deadAllyBrains);
+		
+		for (GEBrain ally : m_livingAllyBrains)
 		{
 			while (!ally.hasSearchedVisibleSquares())
 			{
