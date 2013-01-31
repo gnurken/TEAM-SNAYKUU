@@ -3,8 +3,8 @@
 parent.0 = simple.params
 
 # Number of threads
-evalthreads = 4
-breedthreads = 4
+evalthreads = 1
+breedthreads = 1
 
 # Random seeds
 seed.0 = 0
