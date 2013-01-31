@@ -2,9 +2,9 @@ package geneticAlgorithm;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import bot.CarefulBot;
 import ec.EvolutionState;
@@ -46,8 +46,9 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 		{
 			Session session = new Session(metadata);
 			Team contestants = new Team("Contestants", 1);
+			session.addTeam(contestants);
 			
-			Set<GEBrain> contestantBrains = new TreeSet<GEBrain>();
+			Set<GEBrain> contestantBrains = new HashSet<GEBrain>();
 			
 			int snakesPerTeam = 2;
 			DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
@@ -76,7 +77,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 				
 				stoppingPoint += GEUtil.normalScoringCategories.length;
 				List<Double> allyNormalScoringParameters = new ArrayList<Double>();
-				for (; geneNr < GEUtil.normalScoringCategories.length; ++geneNr)
+				for (; geneNr < stoppingPoint; ++geneNr)
 				{
 					allyNormalScoringParameters.add(individual.genome[geneNr * 2]);
 					allyNormalScoringParameters.add(individual.genome[geneNr * 2 + 1]);
