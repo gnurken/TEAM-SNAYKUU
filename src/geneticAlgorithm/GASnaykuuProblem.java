@@ -118,7 +118,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 			
 			session.prepareForStart();
 			
-			// PLay through one session of the game
+			// Play through one session of the game
 			
 			if (graphical)
 				gameMain.Main.runGame(session, thinkingTime, 25);
@@ -126,8 +126,14 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 			{
 				while (!session.hasEnded())
 				{
+					for (GEBrain brain : contestantBrains)
+						brain.prepareForTick();
+					
 					session.tick();
+					
+					System.out.println("tick.");
 				}
+				System.out.println("Game finished.");
 			}
 			
 			// TODO: fitness per game

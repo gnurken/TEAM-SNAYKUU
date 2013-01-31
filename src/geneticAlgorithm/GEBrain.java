@@ -1,11 +1,13 @@
 package geneticAlgorithm;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import gameLogic.Brain;
 import gameLogic.Direction;
@@ -13,7 +15,7 @@ import gameLogic.GameState;
 import gameLogic.Position;
 import gameLogic.Snake;
 import gameLogic.Square;
-import geneticAlgorithm.GEUtil.ScoredDirection;
+
 import geneticAlgorithm.GEUtil.ScoringDistanceTuple;
 import geneticAlgorithm.GEUtil.ScoringPairTuple;
 
@@ -64,8 +66,11 @@ public class GEBrain implements Brain
 		m_allyBrains = allyBrains;
 		m_allySnakes = allySnakes;
 	}
+	
+	Set<Position> m_visiblePositions = new HashSet<Position>();
+	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
 		
-	ScoringDistanceTuple search(GameState gameState, Position startPosition)
+	ScoringDistanceTuple search(GameState gameState, Direction direction, Set<Position> startingPositions, Set<Position> allyVisiblePositions)
 	{
 		//hej thomas :D
 		//hej daniel :P
@@ -92,10 +97,8 @@ public class GEBrain implements Brain
 		int depth = 0;
 	  
 		Set<Position> searched = new HashSet<Position>();
-		Queue<Position> currentToSearch = new LinkedList<Position>();
+		Queue<Position> currentToSearch = new LinkedList<Position>(startingPositions);
 		Queue<Position> nextToSearch = new LinkedList<Position>();
-		  
-		currentToSearch.add(startPosition);
 	  
 		while(!currentToSearch.isEmpty() && depth < m_vision)
 		{
@@ -105,24 +108,27 @@ public class GEBrain implements Brain
 			{
 				Position currentPosition = currentToSearch.remove();
 				Square currentSquare = gameState.getBoard().getSquare(currentPosition);
-				    
-				openSquareDistances.add(depth);
-
-				//Check for fruit
-				if (currentSquare.hasFruit())
-					fruitDistances.add(depth);
+				   
+				if (allyVisiblePositions == null || allyVisiblePositions.contains(currentPosition))
+				{
+					openSquareDistances.add(depth);
+	
+					//Check for fruit
+					if (currentSquare.hasFruit())
+						fruitDistances.add(depth);
+				}
 				
 				//Check neighbours
-				for (Direction direction : Direction.values())
+				for (Direction neighborDirection : Direction.values())
 				{
 					int nextDepth = depth + 1;
-					Position neighbor = direction.calculateNextPosition(currentPosition);
+					Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
 					if (searched.contains(neighbor))
 						break;
 					
-					if (GEUtil.isSurvivable(currentPosition, direction, gameState, m_currentRound + depth))
+					if (GEUtil.isSurvivable(currentPosition, neighborDirection, gameState, m_currentRound + depth))
 						nextToSearch.add(neighbor);
-					else
+					else if (allyVisiblePositions == null || allyVisiblePositions.contains(currentPosition))
 					{
 						//Check for walls
 						if (currentSquare.hasWall())
@@ -181,20 +187,34 @@ public class GEBrain implements Brain
 			nextToSearch = new LinkedList<Position>();
 		}
 		
+		// If we are only searching our own visible positions,
+		// populate m_visiblePositions and m_nextToSearch
+		if (allyVisiblePositions == null)
+		{
+			m_visiblePositions.addAll(searched);
+			m_nextToSearch.put(direction, new HashSet<Position>(currentToSearch));
+		}
+		
 		return new ScoringDistanceTuple(distanceLists);
 	}
 	
-	double evaluateDirection(Snake snake, Direction direction, GameState gameState)
+	private boolean m_hasSearched = false;
+	
+	public synchronized boolean hasSearchedVisibleSquares()
 	{
-		double score = 0.0;
-		
-		ScoringDistanceTuple scoringDistances = search(gameState, direction.calculateNextPosition(snake.getHeadPosition()));
-		score += m_visibleSquaresScoring.getTotalScore(scoringDistances);
-		
-		//TODO: Evaluate the squares visible to allies:
-		//score += m_allyVisibleSquaresScoring.getTotalScore(m_allyScoringDistances.get(direction));
-		
-		return score;
+		return m_hasSearched;
+	}
+	
+	public Set<Position> getVisiblePositions()
+	{
+		return m_visiblePositions;
+	}
+	
+	public void prepareForTick()
+	{
+		m_hasSearched = false;
+		m_visiblePositions.clear();
+		m_nextToSearch.clear();
 	}
 	
 	int m_currentRound = 0;
@@ -204,16 +224,55 @@ public class GEBrain implements Brain
 	{
 		++m_currentRound;
 		
-		TreeSet<ScoredDirection> scoredDirections = new TreeSet<ScoredDirection>();
+		Map<Direction, Double> scoredDirections = new TreeMap<Direction, Double>();
 		List<Direction> directions = GEUtil.getSurvivableDirections(snake, gameState, m_currentRound);
-		for (int i = 0; i < directions.size(); ++i)
+		for (Direction direction : directions)
 		{
-			Direction direction = directions.get(i);
-			scoredDirections.add(new ScoredDirection(direction, evaluateDirection(snake, direction, gameState)));
+			Set<Position> startingPositions = new HashSet<Position>();
+			startingPositions.add(direction.calculateNextPosition(snake.getHeadPosition()));
+			ScoringDistanceTuple visibleDistances = search(gameState, direction, startingPositions, null);
+			
+			double score = m_visibleSquaresScoring.getTotalScore(visibleDistances);
+			scoredDirections.put(direction, score);
 		}
 		
-		ScoredDirection bestDirection = scoredDirections.pollFirst();
-		return bestDirection != null ? bestDirection.direction : snake.getCurrentDirection();
+		m_hasSearched = true;
+		
+		Set<Position> allyVisiblePositions = new HashSet<Position>();
+		
+		for (GEBrain ally : m_allyBrains)
+		{
+			while (!ally.hasSearchedVisibleSquares())
+			{
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			allyVisiblePositions.addAll(ally.getVisiblePositions());
+		}
+		
+		for (Direction direction : directions)
+		{
+			ScoringDistanceTuple allyVisibleDistances = search(gameState, direction, m_nextToSearch.get(direction), allyVisiblePositions);
+			
+			double score = m_visibleSquaresScoring.getTotalScore(allyVisibleDistances);
+			scoredDirections.put(direction, score);
+		}
+		
+		Direction bestDirection = null;
+		double bestScore = Double.MIN_VALUE;
+		for (Map.Entry<Direction, Double> entry : scoredDirections.entrySet())
+		{
+			if (entry.getValue() > bestScore)
+			{
+				bestScore = entry.getValue();
+				bestDirection = entry.getKey();
+			}
+		}
+		
+		return bestDirection != null ? bestDirection : snake.getCurrentDirection();
 	}
 	
 }
