@@ -3,7 +3,6 @@ package geneticAlgorithm;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
@@ -65,10 +64,7 @@ public class GEBrain implements Brain
 		m_allyBrains = allyBrains;
 		m_allySnakes = allySnakes;
 	}
-	
-	private Map<Direction, ScoringDistanceTuple> m_scoringDistances;
-	private Map<Direction, ScoringDistanceTuple> m_allyScoringDistances;
-	
+		
 	ScoringDistanceTuple search(GameState gameState, Position startPosition)
 	{
 		//hej thomas :D
@@ -203,11 +199,10 @@ public class GEBrain implements Brain
 		double score = 0.0;
 		
 		ScoringDistanceTuple scoringDistances = search(gameState, direction.calculateNextPosition(snake.getHeadPosition()));
-		m_scoringDistances.put(direction, scoringDistances);
+		score += m_visibleSquaresScoring.getTotalScore(scoringDistances);
 		
-		
-		score += m_visibleSquaresScoring.getTotalScore(m_scoringDistances.get(direction));
-		score += m_allyVisibleSquaresScoring.getTotalScore(m_allyScoringDistances.get(direction));
+		//TODO: Evaluate the squares visible to allies:
+		//score += m_allyVisibleSquaresScoring.getTotalScore(m_allyScoringDistances.get(direction));
 		
 		return score;
 	}
