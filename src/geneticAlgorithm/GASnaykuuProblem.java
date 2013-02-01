@@ -49,7 +49,53 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	{
 		if (ind.evaluated)
 			return;
-	
+		
+		int oneSnakeGenomeSize = GEUtil.allScoringCategories.length * 2 * 2;
+		
+		ScoringPairTuple[] visibleSquaresScoring = new ScoringPairTuple[snakesPerTeam];
+		ScoringPairTuple[] allyVisibleSquaresScoring = new ScoringPairTuple[snakesPerTeam];
+		
+		DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
+		for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
+		{
+			int geneNr = oneSnakeGenomeSize * snakeNr;
+			int stoppingPoint = oneSnakeGenomeSize * snakeNr;
+			
+			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
+			List<Double> normalScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				normalScoringParameters.add(individual.genome[geneNr]);
+			}
+			
+			stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
+			List<Double> reverseScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				reverseScoringParameters.add(individual.genome[geneNr]);
+			}
+			
+			visibleSquaresScoring[snakeNr]
+				= new ScoringPairTuple(vision, normalScoringParameters, reverseScoringParameters);
+			
+			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
+			List<Double> allyNormalScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				allyNormalScoringParameters.add(individual.genome[geneNr]);
+			}
+			
+			stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
+			List<Double> allyReverseScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				allyReverseScoringParameters.add(individual.genome[geneNr]);
+			}
+			
+			allyVisibleSquaresScoring[snakeNr]
+				= new ScoringPairTuple(vision, allyNormalScoringParameters, allyReverseScoringParameters);
+		}
+		
 		float[] rawFitness = new float[gamesPerEvaluation];
 		for (int gameNr = 0; gameNr < gamesPerEvaluation; ++gameNr)
 		{
@@ -59,49 +105,9 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 			
 			Set<GEBrain> contestantBrains = new HashSet<GEBrain>();
 			
-			int oneSnakeGenomeSize = GEUtil.allScoringCategories.length * 2 * 2;
-			
-			DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
 			for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
 			{
-				int geneNr = oneSnakeGenomeSize * snakeNr;
-				int stoppingPoint = oneSnakeGenomeSize * snakeNr;
-				
-				stoppingPoint += GEUtil.normalScoringCategories.length * 2;
-				List<Double> normalScoringParameters = new ArrayList<Double>();
-				for (; geneNr < stoppingPoint; ++geneNr)
-				{
-					normalScoringParameters.add(individual.genome[geneNr]);
-				}
-				
-				stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
-				List<Double> reverseScoringParameters = new ArrayList<Double>();
-				for (; geneNr < stoppingPoint; ++geneNr)
-				{
-					reverseScoringParameters.add(individual.genome[geneNr]);
-				}
-				
-				ScoringPairTuple visibleSquaresScoring
-					= new ScoringPairTuple(vision, normalScoringParameters, reverseScoringParameters);
-				
-				stoppingPoint += GEUtil.normalScoringCategories.length * 2;
-				List<Double> allyNormalScoringParameters = new ArrayList<Double>();
-				for (; geneNr < stoppingPoint; ++geneNr)
-				{
-					allyNormalScoringParameters.add(individual.genome[geneNr]);
-				}
-				
-				stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
-				List<Double> allyReverseScoringParameters = new ArrayList<Double>();
-				for (; geneNr < stoppingPoint; ++geneNr)
-				{
-					allyReverseScoringParameters.add(individual.genome[geneNr]);
-				}
-				
-				ScoringPairTuple allyVisibleSquaresScoring
-					= new ScoringPairTuple(vision, allyNormalScoringParameters, allyReverseScoringParameters);
-				
-				GEBrain brain = new GEBrain(visibleSquaresScoring, allyVisibleSquaresScoring, vision);
+				GEBrain brain = new GEBrain(visibleSquaresScoring[snakeNr], allyVisibleSquaresScoring[snakeNr], vision);
 				contestantBrains.add(brain);
 				
 				Snake snake = new Snake(objectType, "Contestant" + snakeNr, brain, Color.BLUE);
@@ -166,8 +172,6 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 				
 			rawFitness[gameNr] = timeFitness * timeFitnessScaling + (score / (float)fruitGoal);
 		}
-		
-		// TODO: fitness per individual
 		
 		float maxRawFitness = 1.0f + timeFitnessScaling;
 		
