@@ -273,7 +273,7 @@ public class GEBrain implements Brain
 			ScoringDistanceTuple allyVisibleDistances = search(gameState, direction, m_nextToSearch.get(direction), allyVisiblePositions);
 			
 			double score = m_visibleSquaresScoring.getTotalScore(allyVisibleDistances);
-			scoredDirections.put(direction, score);
+			scoredDirections.put(direction, scoredDirections.get(direction) + score);
 		}
 		
 		Direction bestDirection = null;
