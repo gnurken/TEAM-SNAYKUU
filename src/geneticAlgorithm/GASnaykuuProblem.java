@@ -30,7 +30,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	
 	public static int nrOfSnakesPerTeam = 2; 
 	
-	private static int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 300, fruitGoal = 10;
+	private static int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 10000, fruitGoal = 10;
 	
 	private static GameObjectType objectType = new GameObjectType("Snake", true);
 	private static Metadata metadata = new Metadata(boardWidth, boardHeight, growthFrequency, fruitFrequency, thinkingTime, fruitGoal);
