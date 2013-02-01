@@ -76,7 +76,8 @@ public class GEBrain implements Brain
 	Set<Position> m_visiblePositions = new HashSet<Position>();
 	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
 		
-	ScoringDistanceTuple search(GameState gameState, Direction direction, Set<Position> startingPositions, Set<Position> allyVisiblePositions)
+	ScoringDistanceTuple search(GameState gameState, Direction direction,
+			Set<Position> startingPositions, Set<Position> allyVisiblePositions, int maxDepth)
 	{
 		//hej thomas :D
 		//hej daniel :P
@@ -106,7 +107,7 @@ public class GEBrain implements Brain
 		Queue<Position> currentToSearch = new LinkedList<Position>(startingPositions);
 		Queue<Position> nextToSearch = new LinkedList<Position>();
 	  
-		while(!currentToSearch.isEmpty() && depth < m_vision)
+		while(!currentToSearch.isEmpty() && depth < maxDepth)
 		{
 			++depth;
 	   
@@ -236,7 +237,7 @@ public class GEBrain implements Brain
 		{
 			Set<Position> startingPositions = new HashSet<Position>();
 			startingPositions.add(direction.calculateNextPosition(snake.getHeadPosition()));
-			ScoringDistanceTuple visibleDistances = search(gameState, direction, startingPositions, null);
+			ScoringDistanceTuple visibleDistances = search(gameState, direction, startingPositions, null, m_vision);
 			
 			double score = m_visibleSquaresScoring.getTotalScore(visibleDistances);
 			scoredDirections.put(direction, score);
@@ -270,7 +271,8 @@ public class GEBrain implements Brain
 		
 		for (Direction direction : directions)
 		{
-			ScoringDistanceTuple allyVisibleDistances = search(gameState, direction, m_nextToSearch.get(direction), allyVisiblePositions);
+			int tooBigDepth = gameState.getBoard().getHeight() * gameState.getBoard().getWidth() + 1;
+			ScoringDistanceTuple allyVisibleDistances = search(gameState, direction, m_nextToSearch.get(direction), allyVisiblePositions, tooBigDepth);
 			
 			double score = m_visibleSquaresScoring.getTotalScore(allyVisibleDistances);
 			scoredDirections.put(direction, scoredDirections.get(direction) + score);

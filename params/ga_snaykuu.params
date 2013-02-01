@@ -41,8 +41,11 @@ select.tournament.size = 2
 eval.problem = geneticAlgorithm.GASnaykuuProblem
 
 # Set gene min and max values.
-# Odd-numbered genes (constants) should have a relatively large range
-# Even numbred genes (exponent bases) shaloud have a much smaller range
+# Even numbered genes (constants) should have a relatively large range
 
 pop.subpop.0.species.min-gene = -1000000
 pop.subpop.0.species.max-gene =  1000000
+
+# Odd numbered genes (exponent bases) should have a much smaller range
+
+
