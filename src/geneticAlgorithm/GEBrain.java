@@ -80,27 +80,10 @@ public class GEBrain implements Brain
 	ScoringDistanceTuple search(GameState gameState, Direction direction,
 			Set<Position> startingPositions, Set<Position> allyVisiblePositions, int maxDepth)
 	{
-		//hej thomas :D
-		//hej daniel :P
-		List<List<Integer>> distanceLists = new LinkedList<List<Integer>>();
-		List<Integer> fruitDistances = new LinkedList<Integer>();
-		List<Integer> wallDistances = new LinkedList<Integer>();
-		List<Integer> enemyHeadDistances = new LinkedList<Integer>();
-		List<Integer> enemyBodyDistances = new LinkedList<Integer>();
-		List<Integer> enemyTailDistances = new LinkedList<Integer>();
-		List<Integer> allyHeadDistances = new LinkedList<Integer>();
-		List<Integer> allyBodyDistances = new LinkedList<Integer>();
-		List<Integer> allyTailDistances = new LinkedList<Integer>();
-		List<Integer> openSquareDistances = new LinkedList<Integer>();
-		distanceLists.add(fruitDistances);
-		distanceLists.add(wallDistances);
-		distanceLists.add(enemyHeadDistances);
-		distanceLists.add(enemyBodyDistances);
-		distanceLists.add(enemyTailDistances);
-		distanceLists.add(allyHeadDistances);
-		distanceLists.add(allyBodyDistances);
-		distanceLists.add(allyTailDistances);
-		distanceLists.add(openSquareDistances);
+		Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
+		
+		for (String scoringCategory : GEUtil.allScoringCategories)
+			distances.put(scoringCategory, new ArrayList<Integer>());
 	  
 		int depth = 0;
 		
@@ -132,18 +115,18 @@ public class GEBrain implements Brain
 					if (survivable)
 					{
 						// No need to check for an open square, we already know it is
-						openSquareDistances.add(depth);
+						distances.get("openSquare").add(depth);
 	
 						//Check for fruit
 						if (currentSquare.hasFruit())
-							fruitDistances.add(depth);
+							distances.get("fruit").add(depth);
 						
 					}
 					else
 					{
 						//Check for walls
 						if (currentSquare.hasWall())
-							wallDistances.add(depth);
+							distances.get("wall").add(depth);
 						
 						Set<Snake> otherSnakes = gameState.getSnakes();
 						otherSnakes.remove(m_thisSnake);
@@ -159,13 +142,13 @@ public class GEBrain implements Brain
 								{
 									//Check for enemy snake heads and if it's alive
 									if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-										enemyHeadDistances.add(depth);
+										distances.get("enemyHead").add(depth);
 									//Check for enemy tails and if it's alive
 									else if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-										enemyTailDistances.add(depth);
+										distances.get("enemyTail").add(depth);
 									//All other cases counts as enemy body
 									else
-										enemyBodyDistances.add(depth);
+										distances.get("enemyBody").add(depth);
 									
 									
 								} 
@@ -175,14 +158,13 @@ public class GEBrain implements Brain
 								{
 									//Check for ally snake heads and if it's alive
 									if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-										allyHeadDistances.add(depth);
+										distances.get("allyHead").add(depth);
 									//Check for ally tails if it's alive
 									else if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-										allyTailDistances.add(depth);
+										distances.get("allyTail").add(depth);
 									//All other cases counts as ally body
 									else
-										allyBodyDistances.add(depth);
-									
+										distances.get("allyBody").add(depth);
 								}
 							}
 						}
@@ -223,7 +205,14 @@ public class GEBrain implements Brain
 			m_nextToSearch.put(direction, new HashSet<Position>(currentToSearch));
 		}
 		
-		return new ScoringDistanceTuple(distanceLists);
+		List<List<Integer>> finalDistances = new ArrayList<List<Integer>>();
+		
+		for (String scoringCategory : GEUtil.allScoringCategories)
+		{
+			finalDistances.add(distances.get(scoringCategory));
+		}
+		
+		return new ScoringDistanceTuple(finalDistances);
 	}
 	
 	private boolean m_hasSearched = false;
