@@ -140,6 +140,9 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 			{
 				while (!session.hasEnded())
 				{
+					for (GEBrain brain : contestantBrains)
+						brain.prepareForTick();
+					
 					session.tick();
 					
 					//System.out.println("tick.");

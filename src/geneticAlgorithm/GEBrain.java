@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 
+import gameLogic.Board;
 import gameLogic.Brain;
 import gameLogic.Direction;
 import gameLogic.GameState;
@@ -102,6 +103,8 @@ public class GEBrain implements Brain
 		distanceLists.add(openSquareDistances);
 	  
 		int depth = 0;
+		
+		boolean searchOnlyVisibleSquares = (allyVisiblePositions == null);
 	  
 		Set<Position> searched = new HashSet<Position>();
 		Queue<Position> currentToSearch = new LinkedList<Position>(startingPositions);
@@ -110,36 +113,37 @@ public class GEBrain implements Brain
 		while(!currentToSearch.isEmpty() && depth < maxDepth)
 		{
 			++depth;
+			
+			Board board = gameState.getBoard();
 	   
 			while(!currentToSearch.isEmpty())
 			{
 				Position currentPosition = currentToSearch.remove();
-				Square currentSquare = gameState.getBoard().getSquare(currentPosition);
-				   
-				if (allyVisiblePositions == null || allyVisiblePositions.contains(currentPosition))
-				{
-					openSquareDistances.add(depth);
-	
-					//Check for fruit
-					if (currentSquare.hasFruit())
-						fruitDistances.add(depth);
-				}
+				Square currentSquare = board.getSquare(currentPosition);
 				
-				//Check neighbours
-				for (Direction neighborDirection : Direction.values())
+				boolean survivable = false;
+				boolean visibleToAlly = (!searchOnlyVisibleSquares && allyVisiblePositions.contains(currentPosition));
+				
+				// Only record distances for squares visible to either the this snake or one of its allies
+				if (searchOnlyVisibleSquares || visibleToAlly)
 				{
-					int nextDepth = depth + 1;
-					Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
-					if (searched.contains(neighbor))
-						break;
+					survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, m_currentRound + depth);
 					
-					if (GEUtil.isSurvivable(currentPosition, neighborDirection, gameState, m_currentRound + depth))
-						nextToSearch.add(neighbor);
-					else if (allyVisiblePositions == null || allyVisiblePositions.contains(currentPosition))
+					if (survivable)
+					{
+						// No need to check for an open square, we already know it is
+						openSquareDistances.add(depth);
+	
+						//Check for fruit
+						if (currentSquare.hasFruit())
+							fruitDistances.add(depth);
+						
+					}
+					else
 					{
 						//Check for walls
 						if (currentSquare.hasWall())
-							wallDistances.add(nextDepth);
+							wallDistances.add(depth);
 						
 						Set<Snake> otherSnakes = gameState.getSnakes();
 						otherSnakes.remove(m_thisSnake);
@@ -155,13 +159,13 @@ public class GEBrain implements Brain
 								{
 									//Check for enemy snake heads and if it's alive
 									if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-										enemyHeadDistances.add(nextDepth);
+										enemyHeadDistances.add(depth);
 									//Check for enemy tails and if it's alive
 									else if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-										enemyTailDistances.add(nextDepth);
+										enemyTailDistances.add(depth);
 									//All other cases counts as enemy body
 									else
-										enemyBodyDistances.add(nextDepth);
+										enemyBodyDistances.add(depth);
 									
 									
 								} 
@@ -171,19 +175,36 @@ public class GEBrain implements Brain
 								{
 									//Check for ally snake heads and if it's alive
 									if (otherSnake.getHeadPosition().equals(currentPosition) && !otherSnake.isDead())
-										allyHeadDistances.add(nextDepth);
+										allyHeadDistances.add(depth);
 									//Check for ally tails if it's alive
 									else if (otherSnake.getTailPosition().equals(currentPosition) && !otherSnake.isDead())
-										allyTailDistances.add(nextDepth);
+										allyTailDistances.add(depth);
 									//All other cases counts as ally body
 									else
-										allyBodyDistances.add(nextDepth);
+										allyBodyDistances.add(depth);
 									
 								}
 							}
-							
 						}
-						searched.add(neighbor);
+					}
+				}
+				
+				// Only add neighbors to nextToSearch only if it is survivable while 
+				// visible to this snake or one of its allies,
+				// or if it is not visible to any snake on this team.
+				if (((searchOnlyVisibleSquares || visibleToAlly) && survivable) || !searchOnlyVisibleSquares)
+				{
+					for (Direction neighborDirection : Direction.values())
+					{
+						Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
+						
+						int x = neighbor.getX();
+						int y = neighbor.getY();
+						boolean validPosition = ((x >= 0 && x < board.getWidth()) &&
+												 (y >= 0 && y < board.getHeight()));
+						
+						if (validPosition && !searched.contains(neighbor))
+							nextToSearch.add(neighbor);
 					}
 				}
 
@@ -196,7 +217,7 @@ public class GEBrain implements Brain
 		
 		// If we are only searching our own visible positions,
 		// populate m_visiblePositions and m_nextToSearch
-		if (allyVisiblePositions == null)
+		if (searchOnlyVisibleSquares)
 		{
 			m_visiblePositions.addAll(searched);
 			m_nextToSearch.put(direction, new HashSet<Position>(currentToSearch));

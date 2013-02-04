@@ -1,5 +1,6 @@
 package geneticAlgorithm;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,10 +37,15 @@ public final class GEUtil
 		}
 	}
 	
-	static boolean isSurvivable(Position currentHeadPosition, Direction direction, GameState gameState, int currentRound)
+	static boolean isSurvivableDirection(Position currentHeadPosition, Direction direction, GameState gameState, int currentRound)
 	{
 		Position nextHeadPosition = GameState.calculateNextPosition(direction, currentHeadPosition);
-		Square nextSquare = gameState.getBoard().getSquare(nextHeadPosition);
+		return isSurvivablePosition(nextHeadPosition, gameState, currentRound);
+	}
+	
+	static boolean isSurvivablePosition(Position position, GameState gameState, int currentRound)
+	{
+		Square nextSquare = gameState.getBoard().getSquare(position);
 		if (nextSquare.isLethal())
 		{
 			boolean growthRound = ((currentRound + 1) % gameState.getMetadata().getGrowthFrequency()) == 0;
@@ -47,7 +53,7 @@ public final class GEUtil
 			{
 				for (Snake tailSnake : gameState.getSnakes())
 				{
-					if (tailSnake.getTailPosition() == nextHeadPosition && !tailSnake.isDead())
+					if (tailSnake.getTailPosition() == position && !tailSnake.isDead())
 					{
 						return true;
 					}
@@ -60,15 +66,21 @@ public final class GEUtil
 		return true;
 	}
 	
+	static List<Direction> getTurnableDirections(Direction initalDirection)
+	{
+		Direction[] directions = {initalDirection, initalDirection.turnLeft(), initalDirection.turnRight()};
+		return Arrays.asList(directions);
+	}
+	
 	static List<Direction> getSurvivableDirections(Snake snake, GameState gameState, int currentRound)
 	{
 		Direction currentDirection = snake.getCurrentDirection();
-		Direction[] directions = {currentDirection, currentDirection.turnLeft(), currentDirection.turnRight()};
+		List<Direction> directions = getTurnableDirections(currentDirection);
 		
 		List<Direction> survivableDirections = new LinkedList<Direction>();
 		for (Direction direction : directions)
 		{
-			if (GEUtil.isSurvivable(snake.getHeadPosition(), direction, gameState, currentRound))
+			if (GEUtil.isSurvivableDirection(snake.getHeadPosition(), direction, gameState, currentRound))
 				survivableDirections.add(direction);
 		}
 		
