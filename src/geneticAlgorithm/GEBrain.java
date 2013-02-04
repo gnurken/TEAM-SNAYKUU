@@ -74,7 +74,7 @@ public class GEBrain implements Brain
 		m_allySnakes = allySnakes;
 	}
 	
-	Set<Position> m_visiblePositions = new HashSet<Position>();
+	Map<Direction, Set<Position>> m_visiblePositions = new HashMap<Direction, Set<Position>>();
 	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
 		
 	ScoringDistanceTuple search(GameState gameState, Direction direction,
@@ -88,10 +88,16 @@ public class GEBrain implements Brain
 		int depth = 0;
 		
 		boolean searchOnlyVisibleSquares = (allyVisiblePositions == null);
-	  
+		
 		Set<Position> searched = new HashSet<Position>();
 		Queue<Position> currentToSearch = new LinkedList<Position>(startingPositions);
 		Queue<Position> nextToSearch = new LinkedList<Position>();
+		
+		// If this search is for squares visible to allies, add all searched squares
+		// from the first search to to the set of searched positions,
+		// to avoid duplicate searching.
+		if (!searchOnlyVisibleSquares)
+			searched.addAll(m_visiblePositions.get(direction));
 	  
 		while(!currentToSearch.isEmpty() && depth < maxDepth)
 		{
@@ -201,7 +207,7 @@ public class GEBrain implements Brain
 		// populate m_visiblePositions and m_nextToSearch
 		if (searchOnlyVisibleSquares)
 		{
-			m_visiblePositions.addAll(searched);
+			m_visiblePositions.put(direction, searched);
 			m_nextToSearch.put(direction, new HashSet<Position>(currentToSearch));
 		}
 		
@@ -230,7 +236,12 @@ public class GEBrain implements Brain
 	
 	public Set<Position> getVisiblePositions()
 	{
-		return m_visiblePositions;
+		Set<Position> allVisiblePositions = new HashSet<Position>();
+		
+		for (Set<Position> directionalPositions : m_visiblePositions.values())
+			allVisiblePositions.addAll(directionalPositions);
+		
+		return allVisiblePositions;
 	}
 	
 	int m_currentRound = 0;
