@@ -93,19 +93,27 @@ public class GEBrain implements Brain
 		Queue<Position> currentToSearch = new LinkedList<Position>(startingPositions);
 		Queue<Position> nextToSearch = new LinkedList<Position>();
 		
-		// If this search is for squares visible to allies, add all searched squares
-		// from the first search to to the set of searched positions,
-		// to avoid duplicate searching.
+		Set<Position> remainingAllyVisiblePositions = new HashSet<Position>();
+		
 		if (!searchOnlyVisibleSquares)
+		{
+			// Add all searched squares from the first search
+			// to the set of searched positions, to avoid duplicate searching.
 			searched.addAll(m_visiblePositions.get(direction));
-	  
+			
+			remainingAllyVisiblePositions.addAll(allyVisiblePositions);
+			remainingAllyVisiblePositions.removeAll(searched);
+		}
+		
 		while(!currentToSearch.isEmpty() && depth < maxDepth)
 		{
 			++depth;
 			
 			Board board = gameState.getBoard();
 	   
-			while(!currentToSearch.isEmpty())
+			while(!currentToSearch.isEmpty() &&
+					(searchOnlyVisibleSquares ||
+					(!searchOnlyVisibleSquares && !remainingAllyVisiblePositions.isEmpty())))
 			{
 				Position currentPosition = currentToSearch.remove();
 				Square currentSquare = board.getSquare(currentPosition);
@@ -196,7 +204,8 @@ public class GEBrain implements Brain
 					}
 				}
 
-				searched.add(currentPosition); 
+				searched.add(currentPosition);
+				remainingAllyVisiblePositions.remove(currentPosition);
 			}
 
 			currentToSearch = nextToSearch;
