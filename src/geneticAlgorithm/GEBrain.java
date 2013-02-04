@@ -206,22 +206,21 @@ public class GEBrain implements Brain
 	}
 	
 	private boolean m_hasSearched = false;
+	private boolean m_hasSeenAlliesVisibleSquares = false;
 	
 	public synchronized boolean hasSearchedVisibleSquares()
 	{
 		return m_hasSearched;
 	}
 	
+	public synchronized boolean hasSeenAlliesVisibleSquares()
+	{
+		return m_hasSeenAlliesVisibleSquares;
+	}
+	
 	public Set<Position> getVisiblePositions()
 	{
 		return m_visiblePositions;
-	}
-	
-	public void prepareForTick()
-	{
-		m_hasSearched = false;
-		m_visiblePositions.clear();
-		m_nextToSearch.clear();
 	}
 	
 	int m_currentRound = 0;
@@ -230,6 +229,8 @@ public class GEBrain implements Brain
 	public Direction getNextMove(Snake snake, GameState gameState)
 	{
 		++m_currentRound;
+		
+		m_hasSeenAlliesVisibleSquares = false;
 		
 		Map<Direction, Double> scoredDirections = new TreeMap<Direction, Double>();
 		List<Direction> directions = GEUtil.getSurvivableDirections(snake, gameState, m_currentRound);
@@ -269,6 +270,8 @@ public class GEBrain implements Brain
 			allyVisiblePositions.addAll(ally.getVisiblePositions());
 		}
 		
+		m_hasSeenAlliesVisibleSquares = true;
+		
 		for (Direction direction : directions)
 		{
 			int tooBigDepth = gameState.getBoard().getHeight() * gameState.getBoard().getWidth() + 1;
@@ -288,6 +291,23 @@ public class GEBrain implements Brain
 				bestDirection = entry.getKey();
 			}
 		}
+		
+		for (GEBrain ally : m_livingAllyBrains)
+		{
+			while (!ally.hasSeenAlliesVisibleSquares())
+			{
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		// Cleanup for next tick:
+		m_hasSearched = false;
+		m_visiblePositions.clear();
+		m_nextToSearch.clear();
 		
 		return bestDirection != null ? bestDirection : snake.getCurrentDirection();
 	}
