@@ -243,7 +243,7 @@ public class GEBrain implements Brain
 		m_hasSeenAlliesVisibleSquares = false;
 		
 		Map<Direction, Double> scoredDirections = new TreeMap<Direction, Double>();
-		List<Direction> directions = GEUtil.getSurvivableDirections(snake, gameState, m_currentRound);
+		List<Direction> directions = GEUtil.getTurnableDirections(snake.getCurrentDirection());
 		for (Direction direction : directions)
 		{
 			Set<Position> startingPositions = new HashSet<Position>();
