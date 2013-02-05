@@ -30,7 +30,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	
 	public static int nrOfSnakesPerTeam = 2; 
 	
-	private static int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 10000, fruitGoal = 10;
+	private static int boardWidth = 15, boardHeight = 15, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 1000, fruitGoal = 10;
 	
 	private static GameObjectType objectType = new GameObjectType("Snake", true);
 	private static Metadata metadata = new Metadata(boardWidth, boardHeight, growthFrequency, fruitFrequency, thinkingTime, fruitGoal);
@@ -43,23 +43,13 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	private static float timeFitnessScaling = 0.2f;
 	private static float maxTime = (boardWidth * boardHeight) / (1.0f / (growthFrequency * 2.0f));
 	
-	@Override
-	public void evaluate(EvolutionState state, Individual ind,
-			int subpopulation, int threadnum)
+	public static ScoringPairTuple[][] createScoringTuples(DoubleVectorIndividual individual)
 	{
-		state.checkpoint = true;
-		state.checkpointModulo = 4;
-		state.checkpointPrefix = "GA_SnaykuuCP";
-		
-		if (ind.evaluated)
-			return;
-		
 		int oneSnakeGenomeSize = GEUtil.allScoringCategories.length * 2 * 2;
 		
-		ScoringPairTuple[] visibleSquaresScoring = new ScoringPairTuple[snakesPerTeam];
-		ScoringPairTuple[] allyVisibleSquaresScoring = new ScoringPairTuple[snakesPerTeam];
+		ScoringPairTuple[][] scoring = new ScoringPairTuple[snakesPerTeam][2];
 		
-		DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
+		//DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
 		for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
 		{
 			int geneNr = oneSnakeGenomeSize * snakeNr;
@@ -79,7 +69,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 				reverseScoringParameters.add(individual.genome[geneNr]);
 			}
 			
-			visibleSquaresScoring[snakeNr]
+			scoring[snakeNr][0]
 				= new ScoringPairTuple(vision, normalScoringParameters, reverseScoringParameters);
 			
 			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
@@ -96,43 +86,68 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 				allyReverseScoringParameters.add(individual.genome[geneNr]);
 			}
 			
-			allyVisibleSquaresScoring[snakeNr]
+			scoring[snakeNr][1]
 				= new ScoringPairTuple(vision, allyNormalScoringParameters, allyReverseScoringParameters);
 		}
+		
+		return scoring;
+	}
+	
+	public static Session setupSession(Team contestants, Team opponents, ScoringPairTuple[][] scoring)
+	{
+		Session session = new Session(metadata);
+		
+		session.addTeam(contestants);
+		
+		Set<GEBrain> contestantBrains = new HashSet<GEBrain>();
+		
+		for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
+		{
+			GEBrain brain = new GEBrain(scoring[snakeNr][0], scoring[snakeNr][1], vision);
+			contestantBrains.add(brain);
+			
+			Snake snake = new Snake(objectType, "Contestant" + snakeNr, brain, Color.BLUE);
+			brain.setSnake(snake);
+			session.addSnake(snake, contestants);
+		}
+		
+		for (GEBrain brain : contestantBrains)
+		{
+			brain.setAllies(contestantBrains, contestants.getSnakes());
+		}
+		
+		session.addTeam(opponents);
+		
+		for (int i = 0; i < snakesPerTeam; ++i)
+		{
+			Snake snake = new Snake(objectType, "Opponent" + i, new CarefulBot(), Color.RED);
+			session.addSnake(snake, opponents);
+		}
+		
+		return session;
+	}
+	
+	@Override
+	public void evaluate(EvolutionState state, Individual ind,
+			int subpopulation, int threadnum)
+	{
+		state.checkpoint = true;
+		state.checkpointModulo = 4;
+		state.checkpointPrefix = "GA_SnaykuuCP";
+
+		if (ind.evaluated)
+			return;
+		
+		DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
+		ScoringPairTuple[][] scoring = createScoringTuples(individual);
 		
 		float[] rawFitness = new float[gamesPerEvaluation];
 		for (int gameNr = 0; gameNr < gamesPerEvaluation; ++gameNr)
 		{
-			Session session = new Session(metadata);
 			Team contestants = new Team("Contestants", 1);
-			session.addTeam(contestants);
-			
-			Set<GEBrain> contestantBrains = new HashSet<GEBrain>();
-			
-			for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
-			{
-				GEBrain brain = new GEBrain(visibleSquaresScoring[snakeNr], allyVisibleSquaresScoring[snakeNr], vision);
-				contestantBrains.add(brain);
-				
-				Snake snake = new Snake(objectType, "Contestant" + snakeNr, brain, Color.BLUE);
-				brain.setSnake(snake);
-				session.addSnake(snake, contestants);
-			}
-			
-			for (GEBrain brain : contestantBrains)
-			{
-				brain.setAllies(contestantBrains, contestants.getSnakes());
-			}
-			
-			// Create Opponent team
 			Team opponents = new Team("Opponents", 2);
-			session.addTeam(opponents);
 			
-			for (int i = 0; i < snakesPerTeam; ++i)
-			{
-				Snake snake = new Snake(objectType, "Opponent" + i, new CarefulBot(), Color.RED);
-				session.addSnake(snake, opponents);
-			}
+			Session session = setupSession(contestants, opponents, scoring);
 			
 			session.prepareForStart();
 			
