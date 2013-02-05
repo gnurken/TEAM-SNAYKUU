@@ -6,6 +6,11 @@ parent.0 = simple.params
 stat.file = §output_stats
 stat.gzip = true
 
+# Checkpointing
+checkpoint =		true
+checkpoint-modulo = 4
+prefix =			GA_SnaykuuCP
+
 # Number of threads
 evalthreads = 1
 breedthreads = 1
