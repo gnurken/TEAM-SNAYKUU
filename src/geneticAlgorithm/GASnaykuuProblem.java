@@ -127,6 +127,28 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 		return session;
 	}
 	
+	static class GraphicalGameRunner extends Thread
+	{
+		private Session m_session;
+		
+		public GraphicalGameRunner(DoubleVectorIndividual individual)
+		{
+			ScoringPairTuple[][] scoring = createScoringTuples(individual);
+			
+			Team contestants = new Team("Contestants", 1);
+			Team opponents = new Team("Opponents", 2);
+			
+			m_session = setupSession(contestants, opponents, scoring);
+		}
+		
+		@Override
+		public void run()
+		{
+			m_session.prepareForStart();
+			gameMain.Main.runGame(m_session, thinkingTime, 25);
+		}
+	}
+	
 	@Override
 	public void evaluate(EvolutionState state, Individual ind,
 			int subpopulation, int threadnum)
@@ -198,7 +220,6 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 		System.out.println("Fitness: " + standardizedFitness);
 		
 		ind.evaluated = true;
-		
 	}
 
 }
