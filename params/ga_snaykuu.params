@@ -2,6 +2,10 @@
 
 parent.0 = simple.params
 
+# Stat output
+stat.file = §output_stats
+stat.gzip = true
+
 # Number of threads
 evalthreads = 1
 breedthreads = 1
