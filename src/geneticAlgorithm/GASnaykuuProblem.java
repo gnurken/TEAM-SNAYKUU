@@ -47,6 +47,10 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	public void evaluate(EvolutionState state, Individual ind,
 			int subpopulation, int threadnum)
 	{
+		state.checkpoint = true;
+		state.checkpointModulo = 4;
+		state.checkpointPrefix = "GA_SnaykuuCP";
+		
 		if (ind.evaluated)
 			return;
 		
