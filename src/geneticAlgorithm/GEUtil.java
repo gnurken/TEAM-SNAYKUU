@@ -1,16 +1,28 @@
 package geneticAlgorithm;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import ec.vector.DoubleVectorIndividual;
+
+import bot.CarefulBot;
 
 import gameLogic.Direction;
+import gameLogic.GameObjectType;
 import gameLogic.GameState;
+import gameLogic.Metadata;
 import gameLogic.Position;
+import gameLogic.Session;
 import gameLogic.Snake;
 import gameLogic.Square;
+import gameLogic.Team;
 
 public final class GEUtil
 {
@@ -177,6 +189,123 @@ public final class GEUtil
 			{
 				this.distances.put(category, distances.get(i++));
 			}
+		}
+	}
+	
+	public static ScoringPairTuple[][] createScoringTuples(double[] genome)
+	{
+		int oneSnakeGenomeSize = GEUtil.allScoringCategories.length * 2 * 2;
+		
+		int snakesPerTeam = GASnaykuuProblem.snakesPerTeam;
+		int vision = GASnaykuuProblem.vision;
+		
+		ScoringPairTuple[][] scoring = new ScoringPairTuple[snakesPerTeam][2];
+		
+		for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
+		{
+			int geneNr = oneSnakeGenomeSize * snakeNr;
+			int stoppingPoint = oneSnakeGenomeSize * snakeNr;
+			
+			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
+			List<Double> normalScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				normalScoringParameters.add(genome[geneNr]);
+			}
+			
+			stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
+			List<Double> reverseScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				reverseScoringParameters.add(genome[geneNr]);
+			}
+			
+			scoring[snakeNr][0]
+				= new ScoringPairTuple(vision, normalScoringParameters, reverseScoringParameters);
+			
+			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
+			List<Double> allyNormalScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				allyNormalScoringParameters.add(genome[geneNr]);
+			}
+			
+			stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
+			List<Double> allyReverseScoringParameters = new ArrayList<Double>();
+			for (; geneNr < stoppingPoint; ++geneNr)
+			{
+				allyReverseScoringParameters.add(genome[geneNr]);
+			}
+			
+			scoring[snakeNr][1]
+				= new ScoringPairTuple(vision, allyNormalScoringParameters, allyReverseScoringParameters);
+		}
+		
+		return scoring;
+	}
+	
+	public static Session setupSession(Team contestants, Team opponents, ScoringPairTuple[][] scoring)
+	{
+		int snakesPerTeam = GASnaykuuProblem.snakesPerTeam;
+		int vision = GASnaykuuProblem.vision;
+		Metadata metadata = GASnaykuuProblem.metadata;
+		
+		GameObjectType objectType = new GameObjectType("Snake", true);
+		
+		Session session = new Session(metadata);
+		
+		session.addTeam(contestants);
+		
+		Set<GEBrain> contestantBrains = new HashSet<GEBrain>();
+		
+		for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
+		{
+			GEBrain brain = new GEBrain(scoring[snakeNr][0], scoring[snakeNr][1], vision);
+			contestantBrains.add(brain);
+			
+			Snake snake = new Snake(objectType, "Contestant" + snakeNr, brain, Color.BLUE);
+			brain.setSnake(snake);
+			session.addSnake(snake, contestants);
+		}
+		
+		for (GEBrain brain : contestantBrains)
+		{
+			brain.setAllies(contestantBrains, contestants.getSnakes());
+		}
+		
+		session.addTeam(opponents);
+		
+		for (int i = 0; i < snakesPerTeam; ++i)
+		{
+			Snake snake = new Snake(objectType, "Opponent" + i, new CarefulBot(), Color.RED);
+			session.addSnake(snake, opponents);
+		}
+		
+		return session;
+	}
+	
+	static class GraphicalGameRunner extends Thread
+	{
+		private Session m_session;
+		private int m_squareSize;
+		
+		public GraphicalGameRunner(double[] genome, int squareSize)
+		{
+			ScoringPairTuple[][] scoring = GEUtil.createScoringTuples(genome);
+			
+			Team contestants = new Team("Contestants", 1);
+			Team opponents = new Team("Opponents", 2);
+			
+			m_session = GEUtil.setupSession(contestants, opponents, scoring);
+			
+			m_squareSize = squareSize;
+		}
+		
+		@Override
+		public void run()
+		{
+			m_session.prepareForStart();
+			gameMain.Main.runGame(m_session, GASnaykuuProblem.metadata.getMaximumThinkingTime(), m_squareSize);
 		}
 	}
 }
