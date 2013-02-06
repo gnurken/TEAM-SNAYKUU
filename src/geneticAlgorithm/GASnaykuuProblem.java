@@ -1,6 +1,9 @@
 package geneticAlgorithm;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,11 +27,11 @@ import geneticAlgorithm.GEUtil.ScoringPairTuple;
 
 public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 {
+	
+	public static int vision = 10;
+	public static int nrOfSnakesPerTeam = 2; 
 
 	private static boolean graphical = false;
-	private static int vision = 10;
-	
-	public static int nrOfSnakesPerTeam = 2; 
 	
 	private static int boardWidth = 15, boardHeight = 15, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 1000, fruitGoal = 10;
 	
@@ -37,7 +40,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	
 	private static int snakesPerTeam = 2;
 	
-	private static final int gamesPerEvaluation = 10;
+	private static final int gamesPerEvaluation = 1;
 	
 	// Fitness constants
 	private static float timeFitnessScaling = 0.2f;
@@ -220,6 +223,51 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 		System.out.println("Fitness: " + standardizedFitness);
 		
 		ind.evaluated = true;
+	}
+	
+	public void describe(
+	        final EvolutionState state, 
+	        final Individual ind, 
+	        final int subpopulation,
+	        final int threadnum,
+	        final int log)
+	{
+		try
+		{
+			DoubleVectorIndividual individual = (DoubleVectorIndividual)ind;
+			double[] genome = individual.genome;
+			
+			boolean append = true;
+			FileWriter fstream = new FileWriter("evolution_results_" + vision + ".txt", append);
+			BufferedWriter out = new BufferedWriter(fstream);
+			
+			out.write("Best team of run:");
+			out.newLine();
+			
+			int genesPerSnake = GEUtil.allScoringCategories.length * 4;
+			
+			for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
+			{
+				out.write("Snake " + (snakeNr + 1) + ":");
+				out.newLine();
+				int snakeGenomeStartingPoint = snakeNr * genesPerSnake;
+				for (int geneNr = 0; geneNr < genesPerSnake; ++geneNr)
+				{
+					out.write(genome[snakeGenomeStartingPoint + geneNr] + " ");
+				}
+				out.newLine();
+			}
+			
+			out.newLine();
+			out.close();
+			
+			System.out.println("Succesfully recorded genome of the best team of generation to file.");
+		}
+		catch (IOException e)
+		{
+			System.out.println("Failed to record genome of the best team of generation to file.");
+			e.printStackTrace();
+		}
 	}
 
 }
