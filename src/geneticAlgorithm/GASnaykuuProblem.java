@@ -20,6 +20,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 	
 	public static int vision = 10;
 	public static int snakesPerTeam = 2; 
+	public static int runsPerSetting = 20;
 
 	private static boolean graphical = false;
 	

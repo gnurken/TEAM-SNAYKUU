@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import ec.Evolve;
+import geneticAlgorithm.GEUtil.ScoringPairTuple;
 
 public class Main {
 	
@@ -25,7 +26,7 @@ public class Main {
 			System.exit(0);
 		}
 		
-		int nrOfRuns = 2;
+		int nrOfRuns = GASnaykuuProblem.runsPerSetting;
 		
 		String evolveArgs[] = {"-file", "params/ga_snaykuu.params", "-p", "jobs=" + nrOfRuns, "stat.gather-full=true"};
 		
