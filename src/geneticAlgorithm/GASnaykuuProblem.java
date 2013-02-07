@@ -24,10 +24,10 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 
 	private static boolean graphical = false;
 	
-	private static int boardWidth = 15, boardHeight = 15, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 1000, fruitGoal = 10;
+	private static int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 1000, fruitGoal = 10;
 	public static Metadata metadata = new Metadata(boardWidth, boardHeight, growthFrequency, fruitFrequency, thinkingTime, fruitGoal);
 	
-	private static final int gamesPerEvaluation = 1;
+	private static final int gamesPerEvaluation = 20;
 	
 	// Fitness constants
 	private static float timeFitnessScaling = 0.2f;
@@ -65,7 +65,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 					
 					//System.out.println("tick.");
 				}
-				System.out.println("Game finished.");
+				//System.out.println("Game finished.");
 			}
 			
 			// Set fitness of the contestants during this game
@@ -101,7 +101,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 		float standardizedFitness = finalRawFitness / maxRawFitness;
 		
 		((SimpleFitness)ind.fitness).setFitness(state, standardizedFitness, false);
-		System.out.println("Fitness: " + standardizedFitness);
+		//System.out.println("Fitness: " + standardizedFitness);
 		
 		ind.evaluated = true;
 	}

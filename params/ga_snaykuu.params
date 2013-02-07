@@ -8,12 +8,12 @@ stat.gzip = true
 
 # Checkpointing
 checkpoint =		true
-checkpoint-modulo = 4
+checkpoint-modulo = 	50
 prefix =			GA_SnaykuuCP
 
 # Number of threads
-evalthreads = 1
-breedthreads = 1
+evalthreads = auto
+breedthreads = auto
 
 # Random seeds
 seed.0 = 0
@@ -22,7 +22,7 @@ seed.2 = 2
 seed.3 = 3
 
 # Number of generations
-generations = 10
+generations = 100
 
 # Population size
 pop.subpops	= 1
