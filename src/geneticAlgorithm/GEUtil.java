@@ -15,6 +15,7 @@ import java.util.Set;
 
 import bot.CarefulBot;
 
+import gameLogic.Board;
 import gameLogic.Direction;
 import gameLogic.GameObjectType;
 import gameLogic.GameState;
@@ -48,6 +49,16 @@ public final class GEUtil
 			else
 				return 0;
 		}
+	}
+	
+	static boolean isValidPosition(Board board, Position position)
+	{
+		int x = position.getX();
+		int y = position.getY();
+		boolean validPosition = ((x >= 0 && x < board.getWidth()) &&
+								 (y >= 0 && y < board.getHeight()));
+		
+		return validPosition;
 	}
 	
 	static boolean isSurvivableDirection(Position currentHeadPosition, Direction direction, GameState gameState, int currentRound)
