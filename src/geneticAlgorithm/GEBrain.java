@@ -78,12 +78,10 @@ public class GEBrain implements Brain
 	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
 		
 	private void recordSquareDistances(Map<String, List<Integer>> distances,
-			GameState gameState, Position position, int depth)
+			GameState gameState, Position position, boolean survivable, int depth)
 	{
 		Board board = gameState.getBoard();
 		Square square = board.getSquare(position);
-		
-		boolean survivable = GEUtil.isSurvivablePosition(position, gameState, m_currentRound + depth);
 		
 		if (survivable)
 		{
@@ -144,14 +142,14 @@ public class GEBrain implements Brain
 		}
 	}
 	
-	private ScoringDistanceTuple searchVisibleSquares(GameState gameState, Direction direction,
-			Position startingPosition, int maxDepth)
+	private ScoringDistanceTuple searchVisibleSquares(GameState gameState,
+			Direction direction, Position startingPosition, int maxDepth)
 	{
 		Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
 		for (String scoringCategory : GEUtil.allScoringCategories)
 			distances.put(scoringCategory, new ArrayList<Integer>());
-	  
-		int depth = 0;
+		
+		Board board = gameState.getBoard();
 		
 		Set<Position> searched = new HashSet<Position>();
 		Set<Position> currentToSearch = new HashSet<Position>();
@@ -159,21 +157,25 @@ public class GEBrain implements Brain
 		
 		currentToSearch.add(startingPosition);
 		
-		Board board = gameState.getBoard();
+		int depth = 0;
 		
-		while(depth++ < maxDepth)
+		while (++depth < maxDepth)
 		{
 			for (Position currentPosition : currentToSearch)
 			{
-				recordSquareDistances(distances, gameState, currentPosition, depth);
+				boolean survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, depth);
+				recordSquareDistances(distances, gameState, currentPosition, survivable, depth);
 				
-				for (Direction neighborDirection : Direction.values())
+				if (survivable)
 				{
-					Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
-					
-					boolean validPosition = GEUtil.isValidPosition(board, neighbor);
-					if (validPosition && !searched.contains(neighbor))
-						nextToSearch.add(neighbor);
+					for (Direction neighborDirection : Direction.values())
+					{
+						Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
+						
+						boolean validPosition = GEUtil.isValidPosition(board, neighbor);
+						if (validPosition && !searched.contains(neighbor))
+							nextToSearch.add(neighbor);
+					}
 				}
 
 				searched.add(currentPosition);
@@ -199,8 +201,9 @@ public class GEBrain implements Brain
 		return new ScoringDistanceTuple(finalDistances);
 	}
 	
-	private ScoringDistanceTuple searchAllyVisibleSquares(GameState gameState, Direction direction,
-			Set<Position> startingPositions, Set<Position> allyVisiblePositions, int startingDepth)
+	private ScoringDistanceTuple searchAllyVisibleSquares(GameState gameState,
+			Direction direction, Set<Position> startingPositions,
+			Set<Position> allyVisiblePositions, int startingDepth)
 	{
 		Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
 		for (String scoringCategory : GEUtil.allScoringCategories)
@@ -214,30 +217,35 @@ public class GEBrain implements Brain
 		Set<Position> nextToSearch = new HashSet<Position>();
 		
 		Set<Position> remainingAllyVisiblePositions = allyVisiblePositions;
-		currentToSearch.retainAll(remainingAllyVisiblePositions);
 		
 		while (!remainingAllyVisiblePositions.isEmpty())
 		{
-			
-			
-			while(!currentToSearch.isEmpty())
+			while (!currentToSearch.isEmpty())
 			{
 				++depth;
 		    
 				for (Position currentPosition : currentToSearch)
 				{
-					recordSquareDistances(distances, gameState, currentPosition, depth);
+					boolean survivable = false;
 					
-					for (Direction neighborDirection : Direction.values())
+					boolean visibleToAlly = allyVisiblePositions.contains(currentPosition);
+					if (visibleToAlly)
 					{
-						Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
-						
-						boolean validPosition = GEUtil.isValidPosition(board, neighbor);
-						boolean notYetSearched = !searched.contains(neighbor);
-						boolean visibleToAlly = remainingAllyVisiblePositions.contains(neighbor);
-						
-						if (validPosition && notYetSearched && visibleToAlly)
-							nextToSearch.add(neighbor);
+						survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, depth);
+						recordSquareDistances(distances, gameState, currentPosition, survivable, depth);
+					}
+					
+					if (!visibleToAlly || survivable)
+					{
+						for (Direction neighborDirection : Direction.values())
+						{
+							Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
+							
+							boolean validPosition = GEUtil.isValidPosition(board, neighbor);
+							
+							if (validPosition && !searched.contains(neighbor))
+								nextToSearch.add(neighbor);
+						}
 					}
 
 					searched.add(currentPosition);
@@ -249,10 +257,7 @@ public class GEBrain implements Brain
 			}
 			
 			if (currentToSearch.isEmpty() && !remainingAllyVisiblePositions.isEmpty())
-			{
-				// TODO: magic search
 				break;
-			}
 		}
 		
 		List<List<Integer>> finalDistances = new ArrayList<List<Integer>>();
