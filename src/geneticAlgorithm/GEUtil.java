@@ -223,7 +223,7 @@ public final class GEUtil
 			i = 0;
 			for (ReverseScoringCategory category : ReverseScoringCategory.values())
 			{
-				this.reverseDistances.put(category, normalDistances.get(i++));
+				this.reverseDistances.put(category, reverseDistances.get(i++));
 			}
 		}
 	}
