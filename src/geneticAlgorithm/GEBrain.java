@@ -3,10 +3,8 @@ package geneticAlgorithm;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -18,6 +16,8 @@ import gameLogic.Position;
 import gameLogic.Snake;
 import gameLogic.Square;
 
+import geneticAlgorithm.GEUtil.NormalScoringCategory;
+import geneticAlgorithm.GEUtil.ReverseScoringCategory;
 import geneticAlgorithm.GEUtil.ScoringDistanceTuple;
 import geneticAlgorithm.GEUtil.ScoringPairTuple;
 
@@ -77,7 +77,8 @@ public class GEBrain implements Brain
 	Map<Direction, Set<Position>> m_visiblePositions = new HashMap<Direction, Set<Position>>();
 	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
 		
-	private void recordSquareDistances(Map<String, List<Integer>> distances,
+	private void recordSquareDistances(Map<NormalScoringCategory, List<Integer>> normalDistances,
+			Map<ReverseScoringCategory, List<Integer>> reverseDistances,
 			GameState gameState, Position position, boolean survivable, int depth)
 	{
 		Board board = gameState.getBoard();
@@ -86,26 +87,24 @@ public class GEBrain implements Brain
 		if (survivable)
 		{
 			// No need to check for an open square, we already know it is
-			distances.get("openSquare").add(depth);
+			reverseDistances.get(ReverseScoringCategory.OPEN_SQUARE).add(depth);
 
 			//Check for fruit
 			if (square.hasFruit())
-				distances.get("fruit").add(depth);
+				normalDistances.get(NormalScoringCategory.FRUIT).add(depth);
 			
 		}
 		else
 		{
 			//Check for walls
 			if (square.hasWall())
-				distances.get("wall").add(depth);
+				normalDistances.get(NormalScoringCategory.WALL).add(depth);
 			
 			Set<Snake> otherSnakes = gameState.getSnakes();
-			otherSnakes.remove(m_thisSnake);
 			
 			//Check for snakes
 			if (square.hasSnake())
 			{
-				
 				for (Snake otherSnake : otherSnakes)
 				{
 					//If otherSnake is an enemy
@@ -113,13 +112,13 @@ public class GEBrain implements Brain
 					{
 						//Check for enemy snake heads and if it's alive
 						if (otherSnake.getHeadPosition().equals(position) && !otherSnake.isDead())
-							distances.get("enemyHead").add(depth);
+							normalDistances.get(NormalScoringCategory.ENEMY_HEAD).add(depth);
 						//Check for enemy tails and if it's alive
 						else if (otherSnake.getTailPosition().equals(position) && !otherSnake.isDead())
-							distances.get("enemyTail").add(depth);
+							normalDistances.get(NormalScoringCategory.ENEMY_TAIL).add(depth);
 						//All other cases counts as enemy body
 						else
-							distances.get("enemyBody").add(depth);
+							normalDistances.get(NormalScoringCategory.ENEMY_BODY).add(depth);
 						
 						
 					} 
@@ -129,13 +128,13 @@ public class GEBrain implements Brain
 					{
 						//Check for ally snake heads and if it's alive
 						if (otherSnake.getHeadPosition().equals(position) && !otherSnake.isDead())
-							distances.get("allyHead").add(depth);
+							normalDistances.get(NormalScoringCategory.ALLY_HEAD).add(depth);
 						//Check for ally tails if it's alive
 						else if (otherSnake.getTailPosition().equals(position) && !otherSnake.isDead())
-							distances.get("allyTail").add(depth);
+							normalDistances.get(NormalScoringCategory.ALLY_TAIL).add(depth);
 						//All other cases counts as ally body
 						else
-							distances.get("allyBody").add(depth);
+							normalDistances.get(NormalScoringCategory.ALLY_BODY).add(depth);
 					}
 				}
 			}
@@ -145,9 +144,13 @@ public class GEBrain implements Brain
 	private ScoringDistanceTuple searchVisibleSquares(GameState gameState,
 			Direction direction, Position startingPosition, int maxDepth)
 	{
-		Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
-		for (String scoringCategory : GEUtil.allScoringCategories)
-			distances.put(scoringCategory, new ArrayList<Integer>());
+		Map<NormalScoringCategory, List<Integer>> normalDistances = new HashMap<NormalScoringCategory, List<Integer>>();
+		for (NormalScoringCategory scoringCategory : GEUtil.NormalScoringCategory.values())
+			normalDistances.put(scoringCategory, new ArrayList<Integer>());
+		
+		Map<ReverseScoringCategory, List<Integer>> reverseDistances = new HashMap<ReverseScoringCategory, List<Integer>>();
+		for (ReverseScoringCategory scoringCategory : ReverseScoringCategory.values())
+			reverseDistances.put(scoringCategory, new ArrayList<Integer>());
 		
 		Board board = gameState.getBoard();
 		
@@ -164,7 +167,7 @@ public class GEBrain implements Brain
 			for (Position currentPosition : currentToSearch)
 			{
 				boolean survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, depth);
-				recordSquareDistances(distances, gameState, currentPosition, survivable, depth);
+				recordSquareDistances(normalDistances, reverseDistances, gameState, currentPosition, survivable, depth);
 				
 				if (survivable)
 				{
@@ -191,23 +194,32 @@ public class GEBrain implements Brain
 		m_visiblePositions.put(direction, searched);
 		m_nextToSearch.put(direction, new HashSet<Position>(currentToSearch));
 		
-		List<List<Integer>> finalDistances = new ArrayList<List<Integer>>();
-		
-		for (String scoringCategory : GEUtil.allScoringCategories)
+		List<List<Integer>> finalNormalDistances = new ArrayList<List<Integer>>();
+		for (NormalScoringCategory scoringCategory : NormalScoringCategory.values())
 		{
-			finalDistances.add(distances.get(scoringCategory));
+			finalNormalDistances.add(normalDistances.get(scoringCategory));
 		}
 		
-		return new ScoringDistanceTuple(finalDistances);
+		List<List<Integer>> finalReverseDistances = new ArrayList<List<Integer>>();
+		for (ReverseScoringCategory scoringCategory : ReverseScoringCategory.values())
+		{
+			finalReverseDistances.add(reverseDistances.get(scoringCategory));
+		}
+		
+		return new ScoringDistanceTuple(finalNormalDistances, finalReverseDistances);
 	}
 	
 	private ScoringDistanceTuple searchAllyVisibleSquares(GameState gameState,
 			Direction direction, Set<Position> startingPositions,
 			Set<Position> allyVisiblePositions, int startingDepth)
 	{
-		Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
-		for (String scoringCategory : GEUtil.allScoringCategories)
-			distances.put(scoringCategory, new ArrayList<Integer>());
+		Map<NormalScoringCategory, List<Integer>> normalDistances = new HashMap<NormalScoringCategory, List<Integer>>();
+		for (NormalScoringCategory scoringCategory : GEUtil.NormalScoringCategory.values())
+			normalDistances.put(scoringCategory, new ArrayList<Integer>());
+		
+		Map<ReverseScoringCategory, List<Integer>> reverseDistances = new HashMap<ReverseScoringCategory, List<Integer>>();
+		for (ReverseScoringCategory scoringCategory : ReverseScoringCategory.values())
+			reverseDistances.put(scoringCategory, new ArrayList<Integer>());
 	  
 		int depth = startingDepth;
 		Board board = gameState.getBoard();
@@ -232,7 +244,7 @@ public class GEBrain implements Brain
 					if (visibleToAlly)
 					{
 						survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, depth);
-						recordSquareDistances(distances, gameState, currentPosition, survivable, depth);
+						recordSquareDistances(normalDistances, reverseDistances, gameState, currentPosition, survivable, depth);
 					}
 					
 					if (!visibleToAlly || survivable)
@@ -260,14 +272,19 @@ public class GEBrain implements Brain
 				break;
 		}
 		
-		List<List<Integer>> finalDistances = new ArrayList<List<Integer>>();
-		
-		for (String scoringCategory : GEUtil.allScoringCategories)
+		List<List<Integer>> finalNormalDistances = new ArrayList<List<Integer>>();
+		for (NormalScoringCategory scoringCategory : NormalScoringCategory.values())
 		{
-			finalDistances.add(distances.get(scoringCategory));
+			finalNormalDistances.add(normalDistances.get(scoringCategory));
 		}
 		
-		return new ScoringDistanceTuple(finalDistances);
+		List<List<Integer>> finalReverseDistances = new ArrayList<List<Integer>>();
+		for (ReverseScoringCategory scoringCategory : ReverseScoringCategory.values())
+		{
+			finalReverseDistances.add(reverseDistances.get(scoringCategory));
+		}
+		
+		return new ScoringDistanceTuple(finalNormalDistances, finalReverseDistances);
 	}
 	
 	private boolean m_hasSearched = false;

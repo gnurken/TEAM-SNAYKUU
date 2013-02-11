@@ -3,6 +3,7 @@ package geneticAlgorithm;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import ec.EvolutionState;
 import ec.Individual;
 import ec.Problem;
@@ -125,7 +126,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 			out.write("Best team of run:");
 			out.newLine();
 			
-			int genesPerSnake = GEUtil.allScoringCategories.length * 4;
+			int genesPerSnake = GEUtil.totalNrOfscoringCategories * 2 * 2;
 			
 			for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
 			{

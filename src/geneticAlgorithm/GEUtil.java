@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ec.app.edge.func.Reverse;
+
 import bot.CarefulBot;
 
 import gameLogic.Board;
@@ -133,42 +135,47 @@ public final class GEUtil
 		}
 	}
 	
-	public static String[] concatinate(String[] A, String[] B)
+	public enum NormalScoringCategory
 	{
-	   String[] C= new String[A.length + B.length];
-	   System.arraycopy(A, 0, C, 0, A.length);
-	   System.arraycopy(B, 0, C, A.length, B.length);
-	   return C;
+		FRUIT,
+		WALL,
+		ENEMY_BODY,
+		ENEMY_HEAD,
+		ENEMY_TAIL,
+		ALLY_BODY,
+		ALLY_HEAD,
+		ALLY_TAIL;
 	}
 	
-	public static String[] normalScoringCategories = {"fruit", "wall",
-	                                                  "enemyBody", "enemyHead", "enemyTail",
-	                                                  "allyBody", "allyHead", "allyTail"};
+	public enum ReverseScoringCategory
+	{
+		OPEN_SQUARE;
+	}
 	
-	public static String[] reverseScoringCategories = {"openSquare"};
-	
-	public static String[] allScoringCategories = concatinate(normalScoringCategories, reverseScoringCategories);
+	public static int totalNrOfscoringCategories = NormalScoringCategory.values().length +
+									  ReverseScoringCategory.values().length;
 
 	public static class ScoringPairTuple
 	{
-		public Map<String, ScoringPair> scoringPairs = new HashMap<String, ScoringPair>();
+		public Map<NormalScoringCategory, ScoringPair> normalScoringPairs = new HashMap<NormalScoringCategory, ScoringPair>();
+		public Map<ReverseScoringCategory, ScoringPair> reverseScoringPairs = new HashMap<ReverseScoringCategory, ScoringPair>();
 		
 		public ScoringPairTuple(int maxDepth, List<Double> normalScoringParameters, List<Double> reverseScoringParameters)
 		{
-			assert normalScoringParameters.size() == normalScoringCategories.length;
-			assert reverseScoringParameters.size() == reverseScoringCategories.length;
+			assert normalScoringParameters.size() == NormalScoringCategory.values().length;
+			assert reverseScoringParameters.size() == ReverseScoringCategory.values().length;
 		
 			int i = 0;
-			for (String category : normalScoringCategories)
+			for (NormalScoringCategory category : NormalScoringCategory.values())
 			{
-				scoringPairs.put(category, new ScoringPair(normalScoringParameters.get(i), normalScoringParameters.get(i+1), maxDepth, false));
+				normalScoringPairs.put(category, new ScoringPair(normalScoringParameters.get(i), normalScoringParameters.get(i+1), maxDepth, false));
 				i += 2;
 			}
 		
 			i = 0;
-			for (String category : reverseScoringCategories)
+			for (ReverseScoringCategory category : ReverseScoringCategory.values())
 			{
-				scoringPairs.put(category, new ScoringPair(reverseScoringParameters.get(i), reverseScoringParameters.get(i+1), maxDepth, true));
+				reverseScoringPairs.put(category, new ScoringPair(reverseScoringParameters.get(i), reverseScoringParameters.get(i+1), maxDepth, true));
 				i += 2;
 			}
 		}
@@ -177,55 +184,71 @@ public final class GEUtil
 		public double getTotalScore(ScoringDistanceTuple scoringDistances)
 		{
 			double score = 0.0;
-			for(Map.Entry<String, List<Integer>> entry : scoringDistances.distances.entrySet())
+			for(Map.Entry<NormalScoringCategory, List<Integer>> entry : scoringDistances.normalDistances.entrySet())
 			{
 				for(Integer distance : entry.getValue())
 				{
-					score += scoringPairs.get(entry.getKey()).getScore(distance);
+					score += normalScoringPairs.get(entry.getKey()).getScore(distance);
 				}
 			}
+			for(Map.Entry<ReverseScoringCategory, List<Integer>> entry : scoringDistances.reverseDistances.entrySet())
+			{
+				for(Integer distance : entry.getValue())
+				{
+					score += reverseScoringPairs.get(entry.getKey()).getScore(distance);
+				}
+			}
+			
 			return score;
 		}
 	}
 	
 	public static class ScoringDistanceTuple
 	{
-		public Map<String, List<Integer>> distances = new HashMap<String, List<Integer>>();
+		public Map<NormalScoringCategory, List<Integer>> normalDistances = new HashMap<NormalScoringCategory, List<Integer>>();
+		public Map<ReverseScoringCategory, List<Integer>> reverseDistances = new HashMap<ReverseScoringCategory, List<Integer>>();
 		
-		public ScoringDistanceTuple(List<List<Integer>> distances)
+		public ScoringDistanceTuple(List<List<Integer>> normalDistances, 
+				List<List<Integer>> reverseDistances)
 		{
-			assert distances.size() == allScoringCategories.length;
-		
+			assert normalDistances.size() == NormalScoringCategory.values().length;
+			assert reverseDistances.size() == ReverseScoringCategory.values().length;
+			
 			int i = 0;
-			for(String category : allScoringCategories)
+			for (NormalScoringCategory category : NormalScoringCategory.values())
 			{
-				this.distances.put(category, distances.get(i++));
+				this.normalDistances.put(category, normalDistances.get(i++));
+			}
+			
+			i = 0;
+			for (ReverseScoringCategory category : ReverseScoringCategory.values())
+			{
+				this.reverseDistances.put(category, normalDistances.get(i++));
 			}
 		}
 	}
 	
 	public static ScoringPairTuple[][] createScoringTuples(double[] genome)
-	{
-		int oneSnakeGenomeSize = GEUtil.allScoringCategories.length * 2 * 2;
-		
+	{	
 		int snakesPerTeam = GASnaykuuProblem.snakesPerTeam;
 		int vision = GASnaykuuProblem.vision;
+		int genesPerSnake = totalNrOfscoringCategories * 2 * 2;
 		
 		ScoringPairTuple[][] scoring = new ScoringPairTuple[snakesPerTeam][2];
 		
 		for (int snakeNr = 0; snakeNr < snakesPerTeam; ++snakeNr)
 		{
-			int geneNr = oneSnakeGenomeSize * snakeNr;
-			int stoppingPoint = oneSnakeGenomeSize * snakeNr;
+			int geneNr = genesPerSnake * snakeNr;
+			int stoppingPoint = genesPerSnake * snakeNr;
 			
-			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
+			stoppingPoint += NormalScoringCategory.values().length * 2;
 			List<Double> normalScoringParameters = new ArrayList<Double>();
 			for (; geneNr < stoppingPoint; ++geneNr)
 			{
 				normalScoringParameters.add(genome[geneNr]);
 			}
 			
-			stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
+			stoppingPoint += ReverseScoringCategory.values().length * 2;
 			List<Double> reverseScoringParameters = new ArrayList<Double>();
 			for (; geneNr < stoppingPoint; ++geneNr)
 			{
@@ -235,14 +258,14 @@ public final class GEUtil
 			scoring[snakeNr][0]
 				= new ScoringPairTuple(vision, normalScoringParameters, reverseScoringParameters);
 			
-			stoppingPoint += GEUtil.normalScoringCategories.length * 2;
+			stoppingPoint += NormalScoringCategory.values().length * 2;
 			List<Double> allyNormalScoringParameters = new ArrayList<Double>();
 			for (; geneNr < stoppingPoint; ++geneNr)
 			{
 				allyNormalScoringParameters.add(genome[geneNr]);
 			}
 			
-			stoppingPoint += GEUtil.reverseScoringCategories.length * 2;
+			stoppingPoint += ReverseScoringCategory.values().length * 2;
 			List<Double> allyReverseScoringParameters = new ArrayList<Double>();
 			for (; geneNr < stoppingPoint; ++geneNr)
 			{
@@ -260,7 +283,7 @@ public final class GEUtil
 	{
 		int nrOfTeams = GASnaykuuProblem.runsPerSetting;
 		int snakesPerTeam = GASnaykuuProblem.snakesPerTeam;
-		int genesPerSnake = allScoringCategories.length * 4;
+		int genesPerSnake = totalNrOfscoringCategories * 2 * 2;
 		
 		ScoringPairTuple scoring[][][] = new ScoringPairTuple[nrOfTeams][snakesPerTeam][2]; 
 		
