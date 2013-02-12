@@ -63,19 +63,20 @@ public final class GEUtil
 		return validPosition;
 	}
 	
-	static boolean isSurvivableDirection(Position currentHeadPosition, Direction direction, GameState gameState, int currentRound)
+	static boolean isSurvivableDirection(Position currentHeadPosition, Direction direction, GameState gameState, int currentRound, int distance)
 	{
 		Position nextHeadPosition = GameState.calculateNextPosition(direction, currentHeadPosition);
-		return isSurvivablePosition(nextHeadPosition, gameState, currentRound);
+		return isSurvivablePosition(nextHeadPosition, gameState, currentRound, distance);
 	}
 	
-	static boolean isSurvivablePosition(Position position, GameState gameState, int currentRound)
+	static boolean isSurvivablePosition(Position position, GameState gameState, int currentRound, int distance)
 	{
 		Square nextSquare = gameState.getBoard().getSquare(position);
 		if (nextSquare.isLethal())
 		{
-			boolean growthRound = ((currentRound + 1) % gameState.getMetadata().getGrowthFrequency()) == 0;
-			if (!growthRound)
+			int growthFrequency = gameState.getMetadata().getGrowthFrequency();
+			int nextGrowthRound = currentRound - (currentRound % growthFrequency) + growthFrequency;
+			if (currentRound + distance < nextGrowthRound)
 			{
 				for (Snake tailSnake : gameState.getSnakes())
 				{
@@ -103,10 +104,12 @@ public final class GEUtil
 		Direction currentDirection = snake.getCurrentDirection();
 		List<Direction> directions = getTurnableDirections(currentDirection);
 		
+		int pointBlankDistance = 1;
+		
 		List<Direction> survivableDirections = new LinkedList<Direction>();
 		for (Direction direction : directions)
 		{
-			if (GEUtil.isSurvivableDirection(snake.getHeadPosition(), direction, gameState, currentRound))
+			if (GEUtil.isSurvivableDirection(snake.getHeadPosition(), direction, gameState, currentRound, pointBlankDistance))
 				survivableDirections.add(direction);
 		}
 		
@@ -131,7 +134,14 @@ public final class GEUtil
 		public double getScore(int depth)
 		{
 			double exponent = reverseDepth ? maxDepth - depth : depth;
-			return exponentConstant * Math.pow(exponentBase, exponent);
+			
+			double score = exponentConstant * Math.pow(exponentBase, exponent);
+			
+			assert(score != Double.POSITIVE_INFINITY);
+			assert(score != Double.NEGATIVE_INFINITY);
+			assert(score != Double.NaN);
+			
+			return score;
 		}
 	}
 	
@@ -162,8 +172,8 @@ public final class GEUtil
 		
 		public ScoringPairTuple(int maxDepth, List<Double> normalScoringParameters, List<Double> reverseScoringParameters)
 		{
-			assert normalScoringParameters.size() == NormalScoringCategory.values().length;
-			assert reverseScoringParameters.size() == ReverseScoringCategory.values().length;
+			assert normalScoringParameters.size() == NormalScoringCategory.values().length * 2;
+			assert reverseScoringParameters.size() == ReverseScoringCategory.values().length * 2;
 		
 			int i = 0;
 			for (NormalScoringCategory category : NormalScoringCategory.values())

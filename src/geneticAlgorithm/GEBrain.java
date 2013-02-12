@@ -73,10 +73,7 @@ public class GEBrain implements Brain
 		m_livingAllyBrains = allyBrains;
 		m_allySnakes = allySnakes;
 	}
-	
-	Map<Direction, Set<Position>> m_visiblePositions = new HashMap<Direction, Set<Position>>();
-	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
-		
+			
 	private void recordSquareDistances(Map<NormalScoringCategory, List<Integer>> normalDistances,
 			Map<ReverseScoringCategory, List<Integer>> reverseDistances,
 			GameState gameState, Position position, boolean survivable, int depth)
@@ -141,6 +138,9 @@ public class GEBrain implements Brain
 		}
 	}
 	
+	Map<Direction, Set<Position>> m_visiblePositions = new HashMap<Direction, Set<Position>>();
+	Map<Direction, Set<Position>> m_nextToSearch = new HashMap<Direction, Set<Position>>();
+	
 	private ScoringDistanceTuple searchVisibleSquares(GameState gameState,
 			Direction direction, Position startingPosition, int maxDepth)
 	{
@@ -166,7 +166,7 @@ public class GEBrain implements Brain
 		{
 			for (Position currentPosition : currentToSearch)
 			{
-				boolean survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, depth);
+				boolean survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, m_currentRound, depth);
 				recordSquareDistances(normalDistances, reverseDistances, gameState, currentPosition, survivable, depth);
 				
 				if (survivable)
@@ -209,9 +209,8 @@ public class GEBrain implements Brain
 		return new ScoringDistanceTuple(finalNormalDistances, finalReverseDistances);
 	}
 	
-	private ScoringDistanceTuple searchAllyVisibleSquares(GameState gameState,
-			Direction direction, Set<Position> startingPositions,
-			Set<Position> allyVisiblePositions, int startingDepth)
+	private ScoringDistanceTuple searchAllyVisibleSquares(GameState gameState, Direction direction,
+			Set<Position> startingPositions, Set<Position> allyVisiblePositions)
 	{
 		Map<NormalScoringCategory, List<Integer>> normalDistances = new HashMap<NormalScoringCategory, List<Integer>>();
 		for (NormalScoringCategory scoringCategory : GEUtil.NormalScoringCategory.values())
@@ -221,7 +220,7 @@ public class GEBrain implements Brain
 		for (ReverseScoringCategory scoringCategory : ReverseScoringCategory.values())
 			reverseDistances.put(scoringCategory, new ArrayList<Integer>());
 	  
-		int depth = startingDepth;
+		int depth = m_vision;
 		Board board = gameState.getBoard();
 		
 		Set<Position> searched = new HashSet<Position>(m_visiblePositions.get(direction));
@@ -230,46 +229,40 @@ public class GEBrain implements Brain
 		
 		Set<Position> remainingAllyVisiblePositions = allyVisiblePositions;
 		
-		while (!remainingAllyVisiblePositions.isEmpty())
+		while (!remainingAllyVisiblePositions.isEmpty() && !currentToSearch.isEmpty())
 		{
-			while (!currentToSearch.isEmpty())
+			++depth;
+	    
+			for (Position currentPosition : currentToSearch)
 			{
-				++depth;
-		    
-				for (Position currentPosition : currentToSearch)
+				boolean survivable = false;
+				
+				boolean visibleToAlly = allyVisiblePositions.contains(currentPosition);
+				if (visibleToAlly)
 				{
-					boolean survivable = false;
-					
-					boolean visibleToAlly = allyVisiblePositions.contains(currentPosition);
-					if (visibleToAlly)
+					survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, m_currentRound, depth);
+					recordSquareDistances(normalDistances, reverseDistances, gameState, currentPosition, survivable, depth);
+				}
+				
+				if (!visibleToAlly || survivable)
+				{
+					for (Direction neighborDirection : Direction.values())
 					{
-						survivable = GEUtil.isSurvivablePosition(currentPosition, gameState, depth);
-						recordSquareDistances(normalDistances, reverseDistances, gameState, currentPosition, survivable, depth);
+						Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
+						
+						boolean validPosition = GEUtil.isValidPosition(board, neighbor);
+						
+						if (validPosition && !searched.contains(neighbor))
+							nextToSearch.add(neighbor);
 					}
-					
-					if (!visibleToAlly || survivable)
-					{
-						for (Direction neighborDirection : Direction.values())
-						{
-							Position neighbor = neighborDirection.calculateNextPosition(currentPosition);
-							
-							boolean validPosition = GEUtil.isValidPosition(board, neighbor);
-							
-							if (validPosition && !searched.contains(neighbor))
-								nextToSearch.add(neighbor);
-						}
-					}
-
-					searched.add(currentPosition);
-					remainingAllyVisiblePositions.remove(currentPosition);
 				}
 
-				currentToSearch = nextToSearch;
-				nextToSearch = new HashSet<Position>();
+				searched.add(currentPosition);
+				remainingAllyVisiblePositions.remove(currentPosition);
 			}
-			
-			if (currentToSearch.isEmpty() && !remainingAllyVisiblePositions.isEmpty())
-				break;
+
+			currentToSearch = nextToSearch;
+			nextToSearch = new HashSet<Position>();
 		}
 		
 		List<List<Integer>> finalNormalDistances = new ArrayList<List<Integer>>();
@@ -360,8 +353,7 @@ public class GEBrain implements Brain
 		
 		for (Direction direction : directions)
 		{
-			int tooBigDepth = gameState.getBoard().getHeight() * gameState.getBoard().getWidth() + 1;
-			ScoringDistanceTuple allyVisibleDistances = searchAllyVisibleSquares(gameState, direction, m_nextToSearch.get(direction), allyVisiblePositions, tooBigDepth);
+			ScoringDistanceTuple allyVisibleDistances = searchAllyVisibleSquares(gameState, direction, m_nextToSearch.get(direction), allyVisiblePositions);
 			
 			double score = m_visibleSquaresScoring.getTotalScore(allyVisibleDistances);
 			scoredDirections.put(direction, scoredDirections.get(direction) + score);
