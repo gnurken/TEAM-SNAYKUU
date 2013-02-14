@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ec.app.edge.func.Reverse;
-
-import bot.CarefulBot;
+import bot.FruitEaterBot;
 
 import gameLogic.Board;
 import gameLogic.Direction;
@@ -364,7 +362,7 @@ public final class GEUtil
 		
 		for (int i = 0; i < snakesPerTeam; ++i)
 		{
-			Snake snake = new Snake(objectType, "Opponent" + i, new CarefulBot(), Color.RED);
+			Snake snake = new Snake(objectType, "Opponent" + i, new FruitEaterBot(), Color.RED);
 			session.addSnake(snake, opponents);
 		}
 		

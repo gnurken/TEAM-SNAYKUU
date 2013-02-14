@@ -25,7 +25,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 
 	private static boolean graphical = false;
 	
-	private static int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 1000, fruitGoal = 10;
+	private static int boardWidth = 30, boardHeight = 30, growthFrequency = 5, fruitFrequency = 10, thinkingTime = 10000, fruitGoal = 10;
 	public static Metadata metadata = new Metadata(boardWidth, boardHeight, growthFrequency, fruitFrequency, thinkingTime, fruitGoal);
 	
 	private static final int gamesPerEvaluation = 20;
