@@ -133,13 +133,12 @@ public final class GEUtil
 		
 		public double getScore(int depth)
 		{
-			double exponent = reverseDepth ? maxDepth - depth : depth;
+			double exponent = reverseDepth ? Math.min(depth, maxDepth) : Math.max(0, maxDepth - depth);
 			
 			double score = exponentConstant * Math.pow(exponentBase, exponent);
 			
-			assert(score != Double.POSITIVE_INFINITY);
-			assert(score != Double.NEGATIVE_INFINITY);
-			assert(score != Double.NaN);
+			assert(!Double.isInfinite(score));
+			assert(!Double.isNaN(score));
 			
 			return score;
 		}
