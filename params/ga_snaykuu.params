@@ -8,7 +8,7 @@ stat.gzip = true
 
 # Checkpointing
 checkpoint =		true
-checkpoint-modulo = 	50
+checkpoint-modulo = 	5
 prefix =			GA_SnaykuuCP
 
 # Number of threads
@@ -45,6 +45,8 @@ pop.subpop.0.species.pipe.source.0.source.0	= ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.0.source.1	= ec.select.TournamentSelection
 
 select.tournament.size = 2
+
+breed.elite.0 = 8
 
 # Problem
 eval.problem = geneticAlgorithm.GASnaykuuProblem
