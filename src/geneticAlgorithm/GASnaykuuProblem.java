@@ -107,6 +107,8 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 		ind.evaluated = true;
 	}
 	
+	public static String teamResultStart = "Best team of run:";
+	
 	public void describe(
 	        final EvolutionState state, 
 	        final Individual ind, 
@@ -123,7 +125,7 @@ public class GASnaykuuProblem extends Problem implements SimpleProblemForm
 			FileWriter fstream = new FileWriter("evolution_results_" + vision + ".txt", append);
 			BufferedWriter out = new BufferedWriter(fstream);
 			
-			out.write("Best team of run:");
+			out.write(teamResultStart);
 			out.newLine();
 			
 			int genesPerSnake = GEUtil.totalNrOfscoringCategories * 2 * 2;
